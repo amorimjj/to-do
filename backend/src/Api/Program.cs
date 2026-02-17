@@ -1,10 +1,12 @@
 using System.Reflection;
+using Microsoft.FeatureManagement;
 using Microsoft.EntityFrameworkCore;
 using Shared.CQRS;
 using Api.Middleware;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Infrastructure.Data;
+using Api.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,11 +17,13 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(
             new System.Text.Json.Serialization.JsonStringEnumConverter());
     });
+
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "TaskFlow API", Version = "v1" });
+    c.DocumentFilter<FeatureGateDocumentFilter>();
 });
 
 // DbContext configuration based on environment
@@ -37,6 +41,8 @@ builder.Services.AddCQRSHandlers(Assembly.GetExecutingAssembly());
 // FluentValidation
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+builder.Services.AddFeatureManagement(); 
 
 // CORS
 var frontendUrl = builder.Configuration["FRONTEND_URL"] ?? "http://localhost:3000";
@@ -59,6 +65,7 @@ if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "E2E")
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 

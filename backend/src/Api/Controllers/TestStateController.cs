@@ -1,3 +1,4 @@
+using Microsoft.FeatureManagement.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Infrastructure.Data;
 using Todo.Models;
@@ -6,6 +7,7 @@ namespace Api.Controllers;
 
 [ApiController]
 [Route("api/test")]
+[FeatureGate("IncludeTestStateController")]
 public class TestStateController : ControllerBase
 {
     private readonly AppDbContext _context;

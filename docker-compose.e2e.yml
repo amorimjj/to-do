@@ -1,0 +1,27 @@
+services:
+  backend-e2e:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=E2E
+      - FRONTEND_URL=http://localhost:3001
+      - FeatureManagement__IncludeTestStateController=true
+    volumes:
+      - taskflow-data-e2e:/app
+
+  frontend-e2e:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=http://localhost:5001/api
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend-e2e
+
+volumes:
+  taskflow-data-e2e:
