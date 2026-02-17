@@ -1,0 +1,596 @@
+---
+alwaysApply: true
+description: Architecture description
+globs: **/*
+---
+
+# Architecture
+
+## Principles
+
+- Api requests (no Server Actions)
+- Server Components default
+- Slot pattern for server→client composition
+- Colocate by domain
+- Type-safe end-to-end (no use of `as` or `any` type unless the function genuinely accepts anything)
+- Next.js 16: `params` is Promise (await it)
+
+## Package Import Rules
+
+**Frontend can import from:**
+- `@aiah/core` - Business logic
+- `@aiah/utils` - Shared utilities
+
+**Frontend CANNOT directly import:**
+- `@aiah/db` - Use API routes instead
+- `@aiah/workflow` - Backend only
+
+❌ `import { query } from "@aiah/db"` (bypasses API layer)
+✅ `import { useApiFetch } from "@/utils/api-fetch"` (proper data access)
+
+## Data Access Patterns
+
+### PostgreSQL (Business Data)
+Access via REST Api
+
+### DynamoDB
+Access via Amplify Data client
+
+#### Real-time Data (DynamoDB via AppSync)
+
+For real-time features (chat, updates), use Amplify Data client:
+
+// hook.ts
+"use client";
+import client from "@/utils/client";
+
+// Subscribe to updates
+const subscription = client.models.ChatUpdate.onCreate({
+    filter: { projectId: { eq: selected?.id } },
+}).subscribe({
+  next: ({ items }) => handleUpdates(items)
+});
+
+### When to Use Which Database
+
+| Use Case               | Database   | Access Pattern              |
+|------------------------|------------|-----------------------------|
+| Chat messages          | DynamoDB   | Amplify client              |
+| Real-time updates      | DynamoDB   | Amplify subscriptions       |
+| Business data          | PostgreSQL | API routes → `@aiah/core`   |
+| Contacts, appointments | PostgreSQL | API routes → `@aiah/core`   |
+
+## Route Organization
+frontend/src/app/
+  ├── (private)/ # Authenticated routes (wrapped by auth layout)
+  │ ├── dashboard/
+  │ ├── signin/
+  │ ├── signout/
+  │ └── layout.tsx # Auth check here
+  ├── (public)/ # Public routes
+  ├── api/ # API routes (webhooks, external)
+  └── layout.tsx # Root layout
+
+**Rules:**
+- Use `(private)` group for all authenticated routes
+- Don't nest auth checks - handle at layout level
+
+## API Routes
+
+API routes are the bridge between client and `@aiah/core`. Located in `frontend/src/app/api/`.
+
+### Basic Pattern
+
+// app/api/projects/[projectid]/businesses/route.ts
+import { NextResponse, NextRequest } from "next/server";
+import { getBusinessByProjectId } from "@aiah/core";
+import withProjectAccess from "@/auth/with-project-access";
+
+export const GET = withProjectAccess(async (_request, { params }) => {
+  const { projectid: projectId } = await params;
+  const business = await getBusinessByProjectId(projectId);
+  return NextResponse.json(business);
+});
+
+### Auth Middleware Wrappers
+
+| Wrapper           | Purpose                                    |
+|----------------------------------------------------------------|
+| withProjectAccess	| Validates user has access to project       |
+| allowCurrentUser	| Validates user is accessing own resource   |
+
+
+Rules
+✅ Import business logic from @aiah/core
+✅ Use auth wrappers for protected routes
+✅ Await params (Next.js 16)
+❌ Don't put business logic in API routes
+
+## Action Handlers (Backend)
+
+The `@aiah/actions-handler` framework powers the AI-to-action pipeline in `core/src/handlers`.
+
+### Folder Structure
+
+core/src/handlers/messages/{domain}/{action}/
+├── handler.ts # Action implementation
+├── types.ts # TypeScript types for action params
+├── definitions.ts # OpenAI function definition (optional)
+├── before.ts # Pre-action hook (optional)
+└── after.ts # Post-action hook (optional)
+
+### Handler Pattern
+
+// handler.ts
+import { Handler } from "@/handlers/types/handlers";
+import { Action } from "@/handlers/types/action";
+import { MyActionType } from "./types";
+
+// We must use destructuring pattern on function use getting just necessary properties used on the handler
+const handler: Handler<MyActionType> = async ({
+  message,           // WhatsApp message context
+  agent,             // Agent configuration
+  chats,             // Chat history
+  contact,           // Contact information
+  action,            // Current action with params (to get only parameters, use action: { params })
+  addAction,         // Add next action to chain
+  addResult,         // Add result for logging
+  setResult,         // Set action result
+}) => {
+  const { params } = action;
+
+  // Execute business logic
+  const result = await doSomething(params);
+
+  // Add result
+  addResult({
+    state: ActionResultState.SUCCESS,
+    details: result,
+  });
+
+  // Chain to next action
+  addAction({ type: Action.ASK });
+};
+
+export default handler;
+
+### Function Definition Pattern
+
+// definitions.ts
+export default {
+  type: "function",
+  function: {
+    strict: true,
+    name: "myActionName",
+    description: "When and why the AI should call this function",
+    parameters: {
+      type: "object",
+      properties: {
+        paramName: {
+          type: "string",
+          description: "What this parameter represents",
+        },
+      },
+      required: ["paramName"],
+      additionalProperties: false,
+    },
+  },
+};
+
+### Types Pattern
+
+// types.ts
+import { ActionEvent } from "@/handlers/types/action-message";
+import { Action } from "@/handlers/types/action";
+
+export type MyActionParams = {
+  paramName: string;
+};
+
+export type MyActionType = ActionEvent<Action.MY_ACTION> & {
+  params: MyActionParams;
+};
+
+### Action Chaining
+Handlers chain actions using addAction:
+
+```typescript
+// Single next action
+addAction({ type: Action.RESPONSE });
+
+// Conditional chaining
+if (needsConfirmation) {
+  addAction({ type: Action.ASK });
+} else {
+  addAction({ type: Action.COMPLETE });
+}
+```
+
+### AI Response with Nested Calls
+The AI can return chained actions via nextCall:
+
+// In ask/handler.ts
+const addActions = (response: AskResponse<Action>) => {
+  response.type = toKebabCase(response.type) as Action;
+  addAction(response);
+  response?.nextCall && addActions(response.nextCall);
+};
+
+addActions(response);
+
+### Error Handling
+// on-error.ts (at folder level)
+import { ErrorHandler } from "@aiah/actions-handler";
+
+const handler: ErrorHandler<Action, ActionMessage> = async (
+  { action, setEvent, addError, forceKill },
+  error
+) => {
+  addError();
+
+  if (forceKill()) {
+    setEvent({
+      type: Action.RESPONSE,
+      content: { message: "Sorry, I encountered an error." },
+    }).addAction({ type: Action.COMPLETE });
+    return;
+  }
+
+  // Re-ask AI with error context
+  setEvent({ type: Action.ASK });
+};
+
+export default handler;
+
+### Handler Inheritance
+// .meta.ts
+export const inherits = ["messages/scheduler/user"];
+export const ignore = ["cancel-scheduled-appointment"];
+
+### Adding a New Action
+
+1. Add action to `core/src/handlers/``
+`npx actions-handler --add --action=messages/{domain}/my-new-action --base-path=core/src`
+
+2. Created folder structure
+
+ core/src/handlers/messages/{domain}/my-new-action/
+   ├── handler.ts
+   ├── types.ts
+   └── definitions.ts  # If AI-callable it must be created manually
+
+3. Implement handler following the patterns above
+
+**Rules:**
+✅ One action = one folder with handler.ts
+✅ Use addAction to chain actions
+✅ Use HandlerException for recoverable errors (AI will retry)
+✅ Use definitions.ts for AI-callable actions
+✅ Keep handlers focused on single responsibility
+✅ Use destructuring pattern getting just variables necessaring for implementation
+❌ Don't call other handlers directly (use action chaining)
+❌ Don't put business logic in before.ts/after.ts (use for cross-cutting concerns only)
+❌ Don't throw raw errors (use HandlerException for AI context)
+
+
+## Server Components
+Server components should NOT fetch data directly. Data fetching happens via:
+- **API Routes** (server-side): Import from `@aiah/core` directly
+- **Client Components**: Use `useApiFetch` hook
+
+```typescript
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params; // Must await in Next.js 16
+  return <ClientWrapper projectId={id} />;
+}
+```
+
+## Client Components
+
+```typescript
+"use client";
+import { useApiFetch } from "@/utils/api-fetch";
+
+export function BusinessList() {
+  const api = useApiFetch();
+  const [businesses, setBusinesses] = useState<Business[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      const data = await api<Business[]>("/projects/123/businesses").get();
+      setBusinesses(data);
+    };
+    load();
+  }, []);
+
+  return <div>{businesses.map(b => <div key={b.id}>{b.name}</div>)}</div>;
+}
+```
+
+## Data Fetching with useApiFetch
+
+The `useApiFetch` hook provides authenticated REST API calls.
+
+### Basic Usage
+
+```typescript
+const api = useApiFetch();
+
+// GET
+const data = await api<Product[]>("/projects/123/products").get();
+
+// POST
+const created = await api<Product>("/projects/123/products").post({ name: "New" });
+
+// PATCH
+await api("/projects/123/products/456").patch({ name: "Updated" });
+
+// DELETE
+await api("/projects/123/products/456").del();
+```
+
+### With Query Parameters
+
+```typescript
+const data = await api<Contact[]>({
+  path: "/projects/123/contacts",
+  query: { limit: "10", offset: "0" }
+}).get();
+````
+
+## Domain Hooks Pattern
+Each domain has a dedicated hook that encapsulates data access, state management, and business logic in a single, cohesive unit.
+
+frontend/src/hooks/use-{domain}/
+├── context.tsx      # Provider + hook export
+├── reducer.ts       # State management (actions + reducer)
+├── types.ts         # Domain-specific types
+├── index.tsx        # Re-exports
+└── utils/           # Domain utilities (API calls, transformations, local storage)
+
+### Core Pattern
+
+// context.tsx
+"use client";
+import {
+  createContext,
+  useReducer,
+  useContext,
+  useEffect,
+  useMemo,
+  PropsWithChildren,
+} from "react";
+
+import { useApiFetch } from "@/utils";
+import client from "@/utils/client";
+
+import reducer, { initialState, ACTIONS } from "./reducer";
+
+export type Context = {
+  list: Item[];
+  selected?: Item;
+  loading: boolean;
+  add: (item: ItemInput) => Promise<void>;
+  select: (id: string) => void;
+  unselect: () => void;
+};
+
+const DomainContext = createContext<Context>(initialContext);
+
+export const DomainProvider = ({ children }: PropsWithChildren) => {
+  const api = useApiFetch();
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const load = async () => {
+    const data = await api<Item[]>("/projects/123/items").get();
+    dispatch({ type: ACTIONS.INIT, payload: data });
+  };
+
+  const add = async (input: ItemInput) => {
+    const created = await api<Item>("/projects/123/items").post(input);
+    dispatch({ type: ACTIONS.ADD, payload: created });
+  };
+
+  const select = (id: string) => {
+    dispatch({ type: ACTIONS.SELECT, payload: { id } });
+  };
+
+  const unselect = () => {
+    dispatch({ type: ACTIONS.UNSELECT });
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  const context = useMemo(() => ({
+    list: state.list,
+    selected: state.selected,
+    loading: state.loading,
+    add,
+    select,
+    unselect,
+  }), [state]);
+
+  return (
+    <DomainContext.Provider value={context}>
+      {children}
+    </DomainContext.Provider>
+  );
+};
+
+export const useDomain = () => useContext(DomainContext);
+
+### Reducer Pattern
+
+// reducer.ts
+export enum ACTIONS {
+  INIT,
+  ADD,
+  UPDATE,
+  SELECT,
+  UNSELECT,
+}
+
+export type InitialState = {
+  list: Item[];
+  indexed: Record<string, Item>;
+  selected?: Item;
+  loading: boolean;
+};
+
+type InitAction = {
+  type: ACTIONS.INIT;
+  payload: Item[];
+};
+
+type AddAction = {
+  type: ACTIONS.ADD;
+  payload: Item;
+};
+
+type ReducerAction = InitAction | AddAction | /* ... */;
+
+export const initialState: InitialState = {
+  list: [],
+  indexed: {},
+  loading: true,
+};
+
+const reducer = (state: InitialState, action: ReducerAction): InitialState => {
+  switch (action.type) {
+    case ACTIONS.INIT:
+      return { ...state, list: action.payload, loading: false };
+    case ACTIONS.ADD:
+      return { ...state, list: [...state.list, action.payload] };
+    default:
+      return state;
+  }
+};
+
+export default reducer;
+
+### Real-time Subscriptions (Amplify)
+
+// Inside context.tsx useEffect
+useEffect(() => {
+  if (!projectId || state.loading) return;
+
+  const subOnCreate = client.models.ChatUpdate.onCreate({
+    filter: { projectId: { eq: projectId } },
+  }).subscribe(() => fetchMore());
+
+  const subOnUpdate = client.models.ChatUpdate.onUpdate({
+    filter: { projectId: { eq: projectId } },
+  }).subscribe(() => fetchMore());
+
+  return () => {
+    subOnCreate.unsubscribe();
+    subOnUpdate.unsubscribe();
+  };
+}, [projectId, state.loading]);
+
+### Local Storage Integration (Dexie)
+
+// utils/load-from-local.ts
+export const loadFromLocal = async (projectId: string) => {
+  return await db.items.where("projectId").equals(projectId).toArray();
+};
+
+// utils/update-local.ts
+export const updateLocal = async (items: Item[]) => {
+  await db.items.bulkPut(items);
+};
+
+### Provider Composition
+
+// app/(private)/layout.tsx
+export default function PrivateLayout({ children }: PropsWithChildren) {
+  return (
+    <ProjectsProvider>
+      <LeadProfileProvider>
+        <MessagesProvider>
+          <CalendarProvider>
+            {children}
+          </CalendarProvider>
+        </MessagesProvider>
+      </LeadProfileProvider>
+    </ProjectsProvider>
+  );
+}
+
+## Slot Pattern
+
+**Problem:** Client component needs server component
+
+**Solution:** Pass as prop
+
+// Server (page.tsx)
+export default async function Page() {
+  return <ClientComp><ServerNav /></ClientComp>;
+}
+
+// Client (ClientComp.tsx)
+"use client";
+import { PropsWithChildren } from React
+export function ClientComp({ children }: PropsWithChildren) {
+  return <div>{children}</div>;
+}
+
+**Rules:**
+- ❌ Client cannot import server component
+- ✅ Client can receive server component as prop
+- ✅ Use `React.ReactNode` type for slots
+
+## Authentication
+
+### Protected Route Layout
+Use route groups for authenticated sections:
+
+// app/(private)/layout.tsx
+import { auth } from "@rocketclimb/auth";
+import { redirect } from "next/navigation";
+
+export default async function PrivateLayout({ children }: PropsWithChildren) {
+  const session = await auth();
+  if (!session) redirect("/login");
+  return <>{children}</>;
+}
+```
+
+### Accessing User in Server Components
+
+export default async function DashboardPage() {
+  const session = await auth();
+  const data = await api.businesses.getByOwner({ clientId: session.user.id });
+  return <Dashboard data={data} />;
+}
+
+## Local State (Dexie/IndexedDB)
+
+For offline-capable features and local caching:
+
+"use client";
+import { db } from "@/db";
+
+export function ChatList() {
+  const chats = db.chats.toArray();
+  return <>{chats?.map(chat => <ChatItem key={chat.id} chat={chat} />)}</>;
+}
+```
+
+**Use Dexie for:**
+- Offline chat message drafts
+- Local UI preferences
+- Cached frequently-accessed data
+
+## Anti-Patterns
+
+❌ Server Actions: Use API routes
+❌ Import server in client: Use slot pattern
+❌ Skip await params: Next.js 16 requires await
+❌ Import @aiah/core in client components: Use API routes via useApiFetch
+❌ Import @aiah/db in API routes: Use @aiah/core functions
+❌ Business logic in API routes: Keep in @aiah/core
+❌ Fetch in server components: Auth tokens are client-side only
+❌ Direct localStorage access: Use useApiFetch which handles tokens

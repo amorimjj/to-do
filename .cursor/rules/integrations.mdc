@@ -1,0 +1,19 @@
+---
+alwaysApply: true
+description: Integrations description
+globs: **/*
+---
+
+# Integrations
+
+## Rules
+
+- Offline-first (no external APIs)
+- Local file storage
+- Type-safe integrations
+- Test with Docker environment
+
+## Anti-Patterns
+
+**❌ External APIs:** Use mock implementations for offline-first
+**❌ Cloud storage:** Store files locally, not in S3/Cloudinary/etc.

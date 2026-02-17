@@ -1,0 +1,114 @@
+---
+alwaysApply: true
+description: Code quality standards
+globs: **/*
+---
+
+# Code Quality
+
+## Standards
+
+- No `any` types (use `unknown` + type guards)
+- Strict TypeScript annotations
+- Use structured logger (no direct console.\*)
+- Remove code, don't deprecate
+- The app must not be allowed to crash, write defensive code and use try/catch if necessary
+- Remove redundant comments where the code is already self-descriptive
+- Prefer arrow function
+
+## TypeScript
+
+Everything thing must use correct types
+
+## Server Components
+
+```typescript
+// Use core
+import { getBusinessById } from '@aiah/core';
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const business = await getBusinessById(id);
+  return <div>{business.name}</div>;
+}
+```
+
+## Client Components
+
+```typescript
+"use client";
+// Use React hooks
+export const Form = () => {
+  const { add } = useMessages();
+  return <button onClick={() => await add({ ... })}>Add</button>;
+}
+```
+
+## Commits
+
+**Group commits thematically** when committing large batches of changes. Use conventional commit format.
+
+### Conventional Commit Types
+
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `docs:` - Documentation changes
+- `chore:` - Maintenance (deps, config, tooling)
+- `refactor:` - Code refactoring
+- `test:` - Test changes
+- `style:` - Formatting, whitespace
+- `perf:` - Performance improvements
+
+### Grouping Strategy
+
+Group related changes into separate commits by theme:
+
+```bash
+# ✅ GOOD: Thematic grouping
+git add .cursor/commands/debt-scan.md .cursor/commands/onboard.md
+git commit -m "docs: update command documentation"
+
+git add .gitignore
+git commit -m "chore: ignore generated audit and QA reports"
+
+git add package.json pnpm-lock.yaml
+git commit -m "chore: update dependencies"
+
+# ❌ BAD: Single large commit
+git add -A
+git commit -m "fix: various updates"
+```
+
+**Grouping rules:**
+
+- Documentation → `docs:` commit
+- Dependencies → `chore:` commit (package.json + lockfile)
+- Configuration → `chore:` commit (.gitignore, config files)
+- Features → `feat:` commit (router + transformers + tests)
+- Related changes → Group together
+
+## Logging
+
+Use structured JSON logger. Direct `console.*` is prohibited in production code (ESLint enforced).
+
+```typescript
+import { Logger } from "@aiah/utils/logger";
+
+// ✅ GOOD: Structured logging
+const logger = new Logger("Feature NAme");
+logger.info("operation_complete", { userId: "abc-123" });
+logger.error("operation_failed", { error: error.message, stack: error.stack });
+
+// ❌ BAD: Direct console (blocked by ESLint)
+console.log("Debug:", data);
+```
+
+**Levels:** `debug`, `info`, `warn`, `error`
+
+## Anti-Patterns
+
+**❌ Server Actions:** Use tRPC instead
+**❌ Client for static:** Use Server Components by default
+**❌ `any` types:** Use proper types or `unknown`
+**❌ Direct console.\*:** Use `logger` from `@aiah/utils/logger`
+**❌ Large monolithic commits:** Group related changes thematically
+**❌ Generic commit messages:** Use descriptive conventional commit format

@@ -1,0 +1,25 @@
+---
+alwaysApply: false
+description: Security best practices and patterns
+---
+
+# Security
+
+## Rules
+
+- Always check for miminum required permission
+- Validate all inputs
+- Never raw SQL with user input
+- Don't leak secrets in errors
+
+## Token Generation
+
+```typescript
+import crypto from "crypto";
+
+const token = `secret_${crypto.randomBytes(32).toString("hex")}`;
+```
+## Anti-Patterns
+
+**❌ Raw SQL:** Use Prisma queries
+**❌ Leak secrets:** Generic error messages only

@@ -1,0 +1,72 @@
+---
+alwaysApply: true
+description: Unit testing playbook
+globs: **/*
+---
+
+# Unit Testing
+
+## Rules
+
+- **Test-Driven Development (TDD) is mandatory** - Write tests FIRST before implementation for all new features and bugfixes
+- Test behavior, not implementation
+- Arrange-Act-Assert pattern
+- One assertion per test
+- Descriptive test names (no "should")
+- Mock external dependencies
+- Test edge cases
+- Fast tests (milliseconds)
+- Independent tests
+- 90%+ coverage on tRPC procedures
+- Prefer integration over mocks
+- Never manually clear/reset mocks
+- Include error testing, invalid input (fuzz) testing
+- Prefer inline snapshot tests for asserting against objects all at once instead of asserting specific object properties
+- NEVER extend test timeouts. if a test times out, that means there is a logical error in the code
+- Run individual tests or groups of related test files while working to resolve errors for a faster feedback loop
+
+## TDD Workflow
+
+**For new features:**
+
+1. Write failing tests based on spec requirements (use `/tdd` command)
+2. Implement minimal code to make tests pass
+3. Refactor while keeping tests green
+
+**For bugfixes:**
+
+1. Write test that reproduces the bug (use `/tdd` command)
+2. Fix bug to make test pass
+3. Verify no regressions
+
+## Test Structure
+
+```typescript
+import { describe, test, expect } from "jest";
+
+describe("ResourceService", () => {
+  test("creates resource with valid input", async () => {
+    // Arrange
+    const input = { name: "Test" };
+
+    // Act
+    const result = await createResource(input);
+
+    // Assert
+    expect(result.name).toBe("Test");
+  });
+});
+```
+
+### Mock Path Best Practices
+
+When mocking components or modules, use alias paths (`@/`) instead of relative paths. This makes tests resilient to directory restructuring:
+
+
+**Why this matters:** When restructuring component directories, relative mock paths silently break because they no longer resolve to the correct module. Alias paths are resolved from the project root and remain stable regardless of where the test file lives.
+
+## File Organization
+
+- `<file>.test.ts` in same directory
+- No `__tests__` directories
+- Root describe block named after file

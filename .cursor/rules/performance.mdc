@@ -1,0 +1,13 @@
+---
+description: Performance best practices and patterns
+globs: **/*
+---
+
+# Performance
+
+## Rules
+
+- Use indexes for frequent queries
+- Batch operations (avoid N+1)
+- Paginate large result sets
+- Lazy load heavy components

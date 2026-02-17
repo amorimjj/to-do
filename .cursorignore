@@ -1,0 +1,9 @@
+.claude/
+.cursor/
+.vscode/
+
+
+# Environment files
+.env
+.env.*
+!.env.example
