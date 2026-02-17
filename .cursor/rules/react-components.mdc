@@ -15,6 +15,7 @@ description: React component best practices
 - Types defined OUTSIDE component
 - No TODOs or placeholders
 - Create components always a piece of code needs to be reusable
+- Always use alias for imports like (`@/{path}`). Relative path is only allowed for `./{path}`
 
 ## Component Structure
 
