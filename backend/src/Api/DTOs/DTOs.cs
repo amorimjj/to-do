@@ -35,3 +35,9 @@ public record PagedResponse<T>(
     int TotalCount,
     int TotalPages
 );
+
+public record TodoSummaryResponse(
+    int TotalCount,
+    int CompletedCount,
+    int PendingCount
+);

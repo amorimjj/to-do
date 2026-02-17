@@ -19,6 +19,7 @@ public class TodosControllerTests
     private Mock<ICommandHandler<DeleteTodoCommand, bool>> _deleteTodoHandler;
     private Mock<IQueryHandler<GetTodoByIdQuery, TodoResponse?>> _getTodoByIdHandler;
     private Mock<IQueryHandler<ListTodosQuery, PagedResponse<TodoResponse>>> _listTodosHandler;
+    private Mock<IQueryHandler<TodoSummaryQuery, TodoSummaryResponse>> _todoSummaryHandler;
     private TodosController _controller;
 
     [SetUp]
@@ -30,6 +31,7 @@ public class TodosControllerTests
         _deleteTodoHandler = new Mock<ICommandHandler<DeleteTodoCommand, bool>>();
         _getTodoByIdHandler = new Mock<IQueryHandler<GetTodoByIdQuery, TodoResponse?>>();
         _listTodosHandler = new Mock<IQueryHandler<ListTodosQuery, PagedResponse<TodoResponse>>>();
+        _todoSummaryHandler = new Mock<IQueryHandler<TodoSummaryQuery, TodoSummaryResponse>>();
 
         _controller = new TodosController(
             _createTodoHandler.Object,
@@ -37,7 +39,8 @@ public class TodosControllerTests
             _toggleTodoHandler.Object,
             _deleteTodoHandler.Object,
             _getTodoByIdHandler.Object,
-            _listTodosHandler.Object);
+            _listTodosHandler.Object,
+            _todoSummaryHandler.Object);
     }
 
     [Test]
@@ -214,6 +217,25 @@ public class TodosControllerTests
 
         // Act
         var result = await _controller.List();
+
+        // Assert
+        Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
+        var okResult = (OkObjectResult)result.Result;
+        Assert.That(okResult.Value, Is.EqualTo(response));
+    }
+
+    [Test]
+    public async Task Summary_ReturnsOkWithTodoSummaryResponse()
+    {
+        // Arrange
+        var response = new TodoSummaryResponse(10, 3, 7);
+
+        _todoSummaryHandler
+            .Setup(h => h.HandleAsync(It.IsAny<TodoSummaryQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _controller.Summary();
 
         // Assert
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());

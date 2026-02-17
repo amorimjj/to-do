@@ -17,6 +17,7 @@ public class TodosController : ControllerBase
     private readonly ICommandHandler<DeleteTodoCommand, bool> _deleteTodoHandler;
     private readonly IQueryHandler<GetTodoByIdQuery, TodoResponse?> _getTodoByIdHandler;
     private readonly IQueryHandler<ListTodosQuery, PagedResponse<TodoResponse>> _listTodosHandler;
+    private readonly IQueryHandler<TodoSummaryQuery, TodoSummaryResponse> _todoSummaryHandler;
 
     public TodosController(
         ICommandHandler<CreateTodoCommand, TodoResponse> createTodoHandler,
@@ -24,7 +25,8 @@ public class TodosController : ControllerBase
         ICommandHandler<ToggleTodoCommand, TodoResponse?> toggleTodoHandler,
         ICommandHandler<DeleteTodoCommand, bool> deleteTodoHandler,
         IQueryHandler<GetTodoByIdQuery, TodoResponse?> getTodoByIdHandler,
-        IQueryHandler<ListTodosQuery, PagedResponse<TodoResponse>> listTodosHandler)
+        IQueryHandler<ListTodosQuery, PagedResponse<TodoResponse>> listTodosHandler,
+        IQueryHandler<TodoSummaryQuery, TodoSummaryResponse> todoSummaryHandler)
     {
         _createTodoHandler = createTodoHandler;
         _updateTodoHandler = updateTodoHandler;
@@ -32,6 +34,7 @@ public class TodosController : ControllerBase
         _deleteTodoHandler = deleteTodoHandler;
         _getTodoByIdHandler = getTodoByIdHandler;
         _listTodosHandler = listTodosHandler;
+        _todoSummaryHandler = todoSummaryHandler;
     }
 
     [HttpGet]
@@ -48,7 +51,14 @@ public class TodosController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("summary")]
+    public async Task<ActionResult<TodoSummaryResponse>> Summary()
+    {
+        var result = await _todoSummaryHandler.HandleAsync(new TodoSummaryQuery());
+        return Ok(result);
+    }
+
+    [HttpGet("{id:guid}")]
     public async Task<ActionResult<TodoResponse>> GetById(Guid id)
     {
         var query = new GetTodoByIdQuery(id);
