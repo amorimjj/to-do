@@ -8,10 +8,11 @@ RUN dotnet restore "TaskFlow.csproj"
 # Copy all source folders
 COPY src/ .
 
+FROM build AS publish
 # Build and publish
 RUN dotnet publish "TaskFlow.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
-COPY --from=build /app/publish .
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "TaskFlow.dll"]

@@ -3,25 +3,37 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      target: build
+    working_dir: /src
+    command: dotnet watch run --project TaskFlow.csproj --urls http://0.0.0.0:8080
     ports:
       - "5005:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - FRONTEND_URL=http://localhost:3000
       - FeatureManagement__IncludeTestStateController=true
+      - DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
     volumes:
-      - taskflow-data:/app
+      - ./backend/src:/src
+      - dotnet-keys:/root/.aspnet/DataProtection-Keys
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        - VITE_API_URL=http://localhost:5005/api
+      target: deps
+    working_dir: /app
+    command: npm run dev -- --host 0.0.0.0
     ports:
-      - "3000:80"
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:5005/api
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     depends_on:
       - backend
 
 volumes:
-  taskflow-data:
+  dotnet-keys:
