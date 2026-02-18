@@ -18,11 +18,7 @@ import type { Todo } from '@/types/todo';
 
 function AppContent() {
   const { activeTab, isInvalidRoute, navigateToTasks } = useNavigate();
-  const {
-    toggleTodo,
-    deleteTodo,
-    createTodo,
-  } = useTodos();
+  const { toggleTodo, deleteTodo, createTodo } = useTodos();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -52,7 +48,7 @@ function AppContent() {
   };
 
   const onDelete = (id: string) => {
-    deleteTodo(id)
+    deleteTodo(id);
     setDeletingId(null);
   };
 
@@ -131,10 +127,10 @@ function AppContent() {
 
       {showForm && (
         <ModalBox onClose={closeForm}>
-            <TodoForm
-              initialData={editingTodo}
-              onCancel={editingTodo ? closeForm : undefined}
-            />
+          <TodoForm
+            initialData={editingTodo}
+            onCancel={editingTodo ? closeForm : undefined}
+          />
         </ModalBox>
       )}
 

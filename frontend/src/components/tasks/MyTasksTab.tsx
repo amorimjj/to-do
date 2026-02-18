@@ -18,17 +18,19 @@ type MyTasksTabProps = {
   onQuickAdd?: (title: string) => void;
 };
 
-export const MyTasksTab = ({
-  onToggle,
-  onDelete,
-  onEdit,
-  onAddTask,
-  onQuickAdd,
-}: MyTasksTabProps) => {
+export const MyTasksTab = ({ onToggle, onDelete, onEdit }: MyTasksTabProps) => {
   const [filter, setFilter] = useState<FilterStatus>('all');
   const [quickInput, setQuickInput] = useState('');
 
-  const { todos, loadingMore, loading, hasMore, loadMore, setFilters } = useTodos();
+  const {
+    todos,
+    loadingMore,
+    loading,
+    hasMore,
+    loadMore,
+    setFilters,
+    createTodo
+  } = useTodos();
 
   const { sentinelRef } = useInfiniteScroll({
     onLoadMore: () => loadMore(),
@@ -47,12 +49,13 @@ export const MyTasksTab = ({
     e.preventDefault();
     const title = quickInput.trim();
     if (!title) return;
-    if (onQuickAdd) {
-      onQuickAdd(title);
-      setQuickInput('');
-    } else {
-      onAddTask();
-    }
+    createTodo({
+      title,
+      description: null,
+      priority: 'Medium',
+      dueDate: null
+    });
+    setQuickInput('');
   };
 
   return (
@@ -85,25 +88,14 @@ export const MyTasksTab = ({
             aria-label="Add a new task"
           />
         </div>
-        {onQuickAdd && (
-          <button
-            type="submit"
-            className="rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-600"
-            data-testid="my-tasks-quick-add-submit"
-          >
-            Add
-          </button>
-        )}
-        {!onQuickAdd && (
-          <button
-            type="button"
-            onClick={onAddTask}
-            className="rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-600"
-            data-testid="my-tasks-add-button"
-          >
-            Add
-          </button>
-        )}
+        <button
+          type="submit"
+          className="rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          data-testid="my-tasks-quick-add-submit"
+          disabled={!quickInput.trim()}
+        >
+          Add
+        </button>
       </form>
 
       <div className="flex flex-wrap items-center gap-4">

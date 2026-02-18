@@ -16,7 +16,6 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   onConfirm,
   onCancel
 }) => {
-
   useKeyboardShortcut(
     () => {
       onCancel();
