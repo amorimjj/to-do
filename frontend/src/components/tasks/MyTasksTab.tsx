@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Filter, Loader2 } from 'lucide-react';
+import { Plus, Loader2 } from 'lucide-react';
 import { TodoItem } from '@/components/TodoItem';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
-import type { Todo } from '@/types/todo';
+import type { Todo, Priority } from '@/types/todo';
 import { useTodos } from '@/hooks/useTodos';
+import { FilterButton } from './FilterButton';
+import { FilterTask } from './FilterTask';
 
 type FilterStatus = 'all' | 'pending' | 'completed';
 
@@ -18,6 +20,8 @@ type MyTasksTabProps = {
 
 export const MyTasksTab = ({ onToggle, onDelete, onEdit }: MyTasksTabProps) => {
   const [filter, setFilter] = useState<FilterStatus>('all');
+  const [priorityFilter, setPriorityFilter] = useState<Priority | 'all'>('all');
+
   const [quickInput, setQuickInput] = useState('');
 
   const {
@@ -41,6 +45,11 @@ export const MyTasksTab = ({ onToggle, onDelete, onEdit }: MyTasksTabProps) => {
     if (status === 'all') setFilters({ isCompleted: undefined });
     else if (status === 'completed') setFilters({ isCompleted: true });
     else setFilters({ isCompleted: false });
+  };
+
+  const handlePriorityClick = (priority: Priority | 'all') => {
+    setPriorityFilter(priority);
+    setFilters({ priority: priority === 'all' ? undefined : priority });
   };
 
   const handleQuickSubmit = (e: React.FormEvent) => {
@@ -96,39 +105,32 @@ export const MyTasksTab = ({ onToggle, onDelete, onEdit }: MyTasksTabProps) => {
         </button>
       </form>
 
-      <div className="flex flex-wrap items-center gap-4">
-        <div
-          className="flex rounded-lg border border-gray-200 bg-white p-0.5 shadow-sm dark:border-gray-700 dark:bg-gray-800"
-          role="tablist"
-          aria-label="Filter tasks"
-        >
-          {(['all', 'pending', 'completed'] as const).map((status) => (
-            <button
-              key={status}
-              type="button"
-              role="tab"
-              aria-selected={filter === status}
-              onClick={() => handleFilterClick(status)}
-              className={`rounded-md px-4 py-2 text-sm font-medium capitalize transition-colors ${
-                filter === status
-                  ? 'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300'
-                  : 'text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200'
-              }`}
-              data-testid={`filter-${status}`}
-            >
-              {status}
-            </button>
-          ))}
+      <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-700">
+        <div className="flex gap-8 mt-3">
+          <FilterButton
+            selected={filter === 'all'}
+            onClick={() => handleFilterClick('all')}
+          >
+            All
+          </FilterButton>
+          <FilterButton
+            selected={filter === 'pending'}
+            onClick={() => handleFilterClick('pending')}
+          >
+            Pending
+          </FilterButton>
+          <FilterButton
+            selected={filter === 'completed'}
+            onClick={() => handleFilterClick('completed')}
+          >
+            Completed
+          </FilterButton>
         </div>
-        <button
-          type="button"
-          className="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
-          data-testid="my-tasks-filter-advanced"
-          aria-label="More filters"
-        >
-          <Filter className="h-4 w-4" />
-          Filter
-        </button>
+        <FilterTask
+          priorityFilter={priorityFilter}
+          handlePriorityClick={handlePriorityClick}
+          handleFilterClick={handleFilterClick}
+        />
       </div>
 
       {loading ? (
@@ -154,11 +156,9 @@ export const MyTasksTab = ({ onToggle, onDelete, onEdit }: MyTasksTabProps) => {
           data-testid="my-tasks-empty"
         >
           <p className="text-gray-500 dark:text-gray-400">
-            {filter === 'all'
+            {filter === 'all' && priorityFilter === 'all'
               ? 'No tasks yet. Add one above.'
-              : filter === 'completed'
-                ? 'No completed tasks.'
-                : 'No pending tasks.'}
+              : 'No tasks found matching your filters.'}
           </p>
         </div>
       ) : (

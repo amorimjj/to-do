@@ -104,6 +104,9 @@ describe('MyTasksTab', () => {
 
     render(<MyTasksTab {...defaultProps} />);
 
+    const filterButton = screen.getByTestId('my-tasks-filter-advanced');
+    fireEvent.click(filterButton);
+
     const completedTab = screen.getByTestId('filter-completed');
     fireEvent.click(completedTab);
 
@@ -118,6 +121,39 @@ describe('MyTasksTab', () => {
     fireEvent.click(allTab);
 
     expect(setFilters).toHaveBeenCalledWith({ isCompleted: undefined });
+  });
+
+  test('calls setFilters when priority tabs clicked', () => {
+    const setFilters = jest.fn();
+    mockedUseTodos.mockReturnValue({
+      ...defaultMockReturn,
+      setFilters
+    } as any);
+
+    render(<MyTasksTab {...defaultProps} />);
+
+    const filterButton = screen.getByTestId('my-tasks-filter-advanced');
+    fireEvent.click(filterButton);
+
+    const highTab = screen.getByTestId('filter-priority-high');
+    fireEvent.click(highTab);
+
+    expect(setFilters).toHaveBeenCalledWith({ priority: 'High' });
+
+    const mediumTab = screen.getByTestId('filter-priority-medium');
+    fireEvent.click(mediumTab);
+
+    expect(setFilters).toHaveBeenCalledWith({ priority: 'Medium' });
+
+    const lowTab = screen.getByTestId('filter-priority-low');
+    fireEvent.click(lowTab);
+
+    expect(setFilters).toHaveBeenCalledWith({ priority: 'Low' });
+
+    const allTab = screen.getByTestId('filter-priority-all');
+    fireEvent.click(allTab);
+
+    expect(setFilters).toHaveBeenCalledWith({ priority: undefined });
   });
 
   test('shows loading spinner when loadingMore is true', () => {
