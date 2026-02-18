@@ -82,6 +82,14 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     context.Database.EnsureCreated();
+
+    if (args.Contains("--seed"))
+    {
+        Console.WriteLine("🌱 Seeding database...");
+        await DatabaseSeeder.SeedAsync(context);
+        Console.WriteLine("✅ Database seeded successfully.");
+        return;
+    }
 }
 
 app.Run();

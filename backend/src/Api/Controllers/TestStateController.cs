@@ -7,7 +7,7 @@ namespace TaskFlow.Api.Controllers;
 
 [ApiController]
 [Route("api/test")]
-[FeatureGate("IncludeTestStateController")]
+[FeatureGate("IncludeDevOnlyControllers")]
 public class TestStateController : ControllerBase
 {
     private readonly AppDbContext _context;

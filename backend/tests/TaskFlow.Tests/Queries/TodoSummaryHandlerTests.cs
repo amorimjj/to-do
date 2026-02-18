@@ -35,9 +35,9 @@ public class TodoSummaryHandlerTests
         var result = await _handler.HandleAsync(query);
 
         // Assert
-        Assert.That(result.TotalCount, Is.EqualTo(0));
-        Assert.That(result.CompletedCount, Is.EqualTo(0));
-        Assert.That(result.PendingCount, Is.EqualTo(0));
+        Assert.That(result.Total, Is.EqualTo(0));
+        Assert.That(result.Completed, Is.EqualTo(0));
+        Assert.That(result.Pending, Is.EqualTo(0));
     }
 
     [Test]
@@ -59,8 +59,8 @@ public class TodoSummaryHandlerTests
         var result = await _handler.HandleAsync(query);
 
         // Assert
-        Assert.That(result.TotalCount, Is.EqualTo(3));
-        Assert.That(result.CompletedCount, Is.EqualTo(2));
-        Assert.That(result.PendingCount, Is.EqualTo(1));
+        Assert.That(result.Total, Is.EqualTo(3));
+        Assert.That(result.Completed, Is.EqualTo(2));
+        Assert.That(result.Pending, Is.EqualTo(1));
     }
 }

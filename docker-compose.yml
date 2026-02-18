@@ -11,7 +11,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - FRONTEND_URL=http://localhost:3000
-      - FeatureManagement__IncludeTestStateController=true
+      - FeatureManagement__IncludeDevOnlyControllers=true
       - DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
       - DOTNET_USE_POLLING_FILE_WATCHER=1
     volumes:
