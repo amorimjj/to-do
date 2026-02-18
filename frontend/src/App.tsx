@@ -12,6 +12,7 @@ import { OverviewTab } from '@/components/overview/OverviewTab';
 import { MyTasksTab } from '@/components/tasks/MyTasksTab';
 import { TodoForm } from '@/components/TodoForm';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
+import { ModalBox } from '@/components/ModalBox';
 import { MOCK_USER_NAME } from '@/data/mockTasks';
 import type { Todo } from '@/types/todo';
 
@@ -143,21 +144,12 @@ function AppContent() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/40 p-4 pt-24">
-          <div className="w-full max-w-lg">
+        <ModalBox onClose={closeForm}>
             <TodoForm
               initialData={editingTodo}
               onCancel={editingTodo ? closeForm : undefined}
             />
-            <button
-              type="button"
-              onClick={closeForm}
-              className="mt-2 w-full rounded-lg border border-gray-200 bg-white py-2 text-sm text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
-            >
-              Close
-            </button>
-          </div>
-        </div>
+        </ModalBox>
       )}
 
       <ConfirmDialog

@@ -30,12 +30,12 @@ describe('useInfiniteScroll', () => {
   it('observes the sentinel element on mount', () => {
     const onLoadMore = jest.fn();
     const sentinel = document.createElement('div');
-    
+
     // We need to set the ref BEFORE the hook runs the effect
-    // But renderHook runs it immediately. 
-    // In actual React, the ref is attached during the render phase 
+    // But renderHook runs it immediately.
+    // In actual React, the ref is attached during the render phase
     // and available in the effect.
-    
+
     const { result } = renderHook(() => {
       const hook = useInfiniteScroll({
         onLoadMore,
@@ -43,7 +43,7 @@ describe('useInfiniteScroll', () => {
         loading: false
       });
       // In the same render where we return it, we set it.
-      // This is slightly different from how React attaches it, but it 
+      // This is slightly different from how React attaches it, but it
       // ensures that when the effect runs (after the render completes)
       // the ref is set.
       if (!hook.sentinelRef.current) {

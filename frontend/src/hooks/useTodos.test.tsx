@@ -211,7 +211,10 @@ describe('useTodos', () => {
       await waitFor(() => expect(result.current.loading).toBe(false));
 
       await act(async () => {
-        await result.current.createTodo({ title: 'New Todo', priority: 'High' });
+        await result.current.createTodo({
+          title: 'New Todo',
+          priority: 'High'
+        });
       });
 
       expect(result.current.weeklySummary?.wednesday.total).toBe(2);
@@ -254,7 +257,7 @@ describe('useTodos', () => {
       };
       const toggledOldTodo: Todo = { ...oldTodo, isCompleted: true };
       mockedTodoApi.toggle.mockResolvedValue(toggledOldTodo);
-      
+
       // Update mockTodos for this test
       mockedTodoApi.list.mockResolvedValue({
         items: [oldTodo],

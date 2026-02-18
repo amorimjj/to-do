@@ -155,7 +155,9 @@ export const MyTasksTab = ({
           data-testid="my-tasks-loading"
         >
           <Loader2 className="h-8 w-8 animate-spin text-violet-600 dark:text-violet-400" />
-          <p className="mt-4 text-gray-500 dark:text-gray-400">Loading tasks...</p>
+          <p className="mt-4 text-gray-500 dark:text-gray-400">
+            Loading tasks...
+          </p>
         </div>
       ) : tasks.length === 0 ? (
         <div

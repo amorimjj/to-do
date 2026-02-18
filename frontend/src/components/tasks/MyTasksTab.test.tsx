@@ -65,20 +65,20 @@ describe('MyTasksTab', () => {
 
   test('calls onFilterChange when filter tabs clicked', () => {
     render(<MyTasksTab {...defaultProps} />);
-    
+
     const completedTab = screen.getByTestId('filter-completed');
     fireEvent.click(completedTab);
-    
+
     expect(onFilterChange).toHaveBeenCalledWith(true);
 
     const pendingTab = screen.getByTestId('filter-pending');
     fireEvent.click(pendingTab);
-    
+
     expect(onFilterChange).toHaveBeenCalledWith(false);
 
     const allTab = screen.getByTestId('filter-all');
     fireEvent.click(allTab);
-    
+
     expect(onFilterChange).toHaveBeenCalledWith(undefined);
   });
 
@@ -94,6 +94,8 @@ describe('MyTasksTab', () => {
 
   test('does not render sentinel when hasMore is false', () => {
     render(<MyTasksTab {...defaultProps} hasMore={false} />);
-    expect(screen.queryByTestId('infinite-scroll-sentinel')).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId('infinite-scroll-sentinel')
+    ).not.toBeInTheDocument();
   });
 });

@@ -81,10 +81,16 @@ describe('OverviewTab', () => {
     mockUseTodos.mockReturnValue({
       summary: mockSummary,
       loading: false,
-      priorityTasks: mockTasks.filter(t => !t.isCompleted).sort((a, b) => {
-        const order = { High: 0, Medium: 1, Low: 2 };
-        return (order[a.priority as keyof typeof order] || 0) - (order[b.priority as keyof typeof order] || 0);
-      }).slice(0, 5)
+      priorityTasks: mockTasks
+        .filter((t) => !t.isCompleted)
+        .sort((a, b) => {
+          const order = { High: 0, Medium: 1, Low: 2 };
+          return (
+            (order[a.priority as keyof typeof order] || 0) -
+            (order[b.priority as keyof typeof order] || 0)
+          );
+        })
+        .slice(0, 5)
     });
     // Default system time to morning
     jest.useFakeTimers();
@@ -101,7 +107,9 @@ describe('OverviewTab', () => {
     render(<OverviewTab {...defaultProps} />);
 
     expect(screen.getByText(/Good morning, John Doe!/)).toBeInTheDocument();
-    expect(screen.getByText(/You have 6 tasks to complete today./)).toBeInTheDocument();
+    expect(
+      screen.getByText(/You have 6 tasks to complete today./)
+    ).toBeInTheDocument();
   });
 
   test('displays correct greeting for afternoon', () => {
@@ -160,7 +168,7 @@ describe('OverviewTab', () => {
 
   test('calls onCreateTask when create buttons are clicked', () => {
     render(<OverviewTab {...defaultProps} />);
-    
+
     // There are two create task triggers in the component
     const createCta = screen.getByTestId('create-task-cta');
     const plusButton = createCta.querySelector('button');
@@ -175,10 +183,10 @@ describe('OverviewTab', () => {
 
   test('calls onToggle, onDelete, onEdit when interactions happen on TodoItem', () => {
     render(<OverviewTab {...defaultProps} />);
-    
+
     // For the first todo item (High Priority Task, id: '1')
     const firstTodo = screen.getByTestId('todo-item-1');
-    
+
     const toggleButton = firstTodo.querySelector('[data-testid="todo-toggle"]');
     const deleteButton = firstTodo.querySelector('[data-testid="todo-delete"]');
     const editButton = firstTodo.querySelector('[data-testid="todo-edit"]');
@@ -187,7 +195,9 @@ describe('OverviewTab', () => {
     expect(defaultProps.onToggle).toHaveBeenCalledWith('1');
 
     if (editButton) fireEvent.click(editButton);
-    expect(defaultProps.onEdit).toHaveBeenCalledWith(expect.objectContaining({ id: '1' }));
+    expect(defaultProps.onEdit).toHaveBeenCalledWith(
+      expect.objectContaining({ id: '1' })
+    );
 
     if (deleteButton) fireEvent.click(deleteButton);
     expect(defaultProps.onDelete).toHaveBeenCalledWith('1');

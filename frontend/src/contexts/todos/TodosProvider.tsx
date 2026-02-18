@@ -34,7 +34,6 @@ type Action =
   | { type: 'UPDATE_TODO'; payload: Todo }
   | { type: 'REMOVE_TODO'; payload: string };
 
-
 const initialState: TodosContextState = {
   todos: [],
   priorityTasks: [],
@@ -63,26 +62,31 @@ const initialState: TodosContextState = {
 type IncrementOption = 'up' | 'down';
 
 type UpdateWeeklySummaryOptions = {
-  completed?: IncrementOption,
-  total?: IncrementOption
-}
+  completed?: IncrementOption;
+  total?: IncrementOption;
+};
 
-const updateWeeklySummary = ({ ...weeklySummary }: WeeklySummary, dayOfWeek: DayOfWeek, { completed, total }: UpdateWeeklySummaryOptions) => {
+const updateWeeklySummary = (
+  { ...weeklySummary }: WeeklySummary,
+  dayOfWeek: DayOfWeek,
+  { completed, total }: UpdateWeeklySummaryOptions
+) => {
   const current = { ...weeklySummary[dayOfWeek] };
 
-  if ( completed !== undefined ) {
-    current.completed = completed === 'up' ? current.completed + 1 : current.completed - 1;
+  if (completed !== undefined) {
+    current.completed =
+      completed === 'up' ? current.completed + 1 : current.completed - 1;
   }
 
-  if ( total !== undefined ) {
+  if (total !== undefined) {
     current.total = total === 'up' ? current.total + 1 : current.total - 1;
   }
 
   return {
     ...weeklySummary,
     [dayOfWeek]: current
-  }
-}
+  };
+};
 
 function calculateProgress(completed: number, total: number): number {
   return total === 0 ? 0 : completed / total;
@@ -95,7 +99,12 @@ function reducer(state: TodosContextState, action: Action): TodosContextState {
     case 'SET_LOADING_MORE':
       return { ...state, loadingMore: action.payload };
     case 'SET_ERROR':
-      return { ...state, loading: false, loadingMore: false, error: action.payload };
+      return {
+        ...state,
+        loading: false,
+        loadingMore: false,
+        error: action.payload
+      };
     case 'SET_DATA':
       return {
         ...state,
@@ -138,7 +147,9 @@ function reducer(state: TodosContextState, action: Action): TodosContextState {
 
       if (newWeeklySummary) {
         const dayOfWeek = getDayOfWeek(action.payload.createdAt);
-        newWeeklySummary = updateWeeklySummary(newWeeklySummary, dayOfWeek, { total: 'up' });
+        newWeeklySummary = updateWeeklySummary(newWeeklySummary, dayOfWeek, {
+          total: 'up'
+        });
       }
 
       return {
@@ -175,7 +186,9 @@ function reducer(state: TodosContextState, action: Action): TodosContextState {
 
         if (newWeeklySummary && isThisWeek(action.payload.createdAt)) {
           const dayOfWeek = getDayOfWeek(action.payload.createdAt);
-          newWeeklySummary = updateWeeklySummary(newWeeklySummary, dayOfWeek, { completed: action.payload.isCompleted ? 'up' : 'down' });
+          newWeeklySummary = updateWeeklySummary(newWeeklySummary, dayOfWeek, {
+            completed: action.payload.isCompleted ? 'up' : 'down'
+          });
         }
       }
 
@@ -212,7 +225,10 @@ function reducer(state: TodosContextState, action: Action): TodosContextState {
         if (newWeeklySummary && isThisWeek(todoToRemove.createdAt)) {
           const dayOfWeek = getDayOfWeek(todoToRemove.createdAt);
           const completed = todoToRemove.isCompleted ? 'down' : undefined;
-          newWeeklySummary = updateWeeklySummary(newWeeklySummary, dayOfWeek, { completed, total: 'down' });
+          newWeeklySummary = updateWeeklySummary(newWeeklySummary, dayOfWeek, {
+            completed,
+            total: 'down'
+          });
         }
       }
 
@@ -320,31 +336,38 @@ export const TodosProvider = ({ children }: TodosProviderProps) => {
     []
   );
 
-  const toggleTodo = useCallback(async (id: string) => {
-    const todo = state.todos.find(t => t.id === id);
+  const toggleTodo = useCallback(
+    async (id: string) => {
+      const todo = state.todos.find((t) => t.id === id);
 
-    if (!todo) {
-      logger.error('Failed to toggle todo: not found', { id });
-      dispatch({ type: 'SET_ERROR', payload: 'Todo not found' });
-      return;
-    }
+      if (!todo) {
+        logger.error('Failed to toggle todo: not found', { id });
+        dispatch({ type: 'SET_ERROR', payload: 'Todo not found' });
+        return;
+      }
 
-    const toggled = { ...todo, isCompleted: !todo.isCompleted, updatedAt: new Date().toISOString() };
-    dispatch({ type: 'UPDATE_TODO', payload: toggled });
+      const toggled = {
+        ...todo,
+        isCompleted: !todo.isCompleted,
+        updatedAt: new Date().toISOString()
+      };
+      dispatch({ type: 'UPDATE_TODO', payload: toggled });
 
-    try {
-      const updated = await todoApi.toggle(id);
-      dispatch({ type: 'UPDATE_TODO', payload: updated });
-    } catch (err) {
-      dispatch({ type: 'UPDATE_TODO', payload: todo });
-      logger.error('Failed to toggle todo', err, { id });
-      dispatch({ type: 'SET_ERROR', payload: 'Failed to toggle todo' });
-    }
-  }, [state.todos]);
+      try {
+        const updated = await todoApi.toggle(id);
+        dispatch({ type: 'UPDATE_TODO', payload: updated });
+      } catch (err) {
+        dispatch({ type: 'UPDATE_TODO', payload: todo });
+        logger.error('Failed to toggle todo', err, { id });
+        dispatch({ type: 'SET_ERROR', payload: 'Failed to toggle todo' });
+      }
+    },
+    [state.todos]
+  );
 
   const deleteTodo = useCallback(
     async (id: string) => {
-      const deleting = state.todos.find(t => t.id === id);
+      const deleting = state.todos.find((t) => t.id === id);
 
       if (!deleting) {
         logger.error('Failed to delete todo: not found', { id });

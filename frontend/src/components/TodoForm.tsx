@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { useState, useEffect, FC, FormEvent } from 'react';
 import { Todo, Priority } from '@/types/todo';
 import { useTodos } from '@/hooks/useTodos';
 import { dateToString } from '@/utils/date';
@@ -9,10 +8,7 @@ interface TodoFormProps {
   onCancel?: () => void;
 }
 
-export const TodoForm: React.FC<TodoFormProps> = ({
-  initialData,
-  onCancel
-}) => {
+export const TodoForm: FC<TodoFormProps> = ({ initialData, onCancel }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<Priority>('Medium');
@@ -30,7 +26,7 @@ export const TodoForm: React.FC<TodoFormProps> = ({
     }
   }, [initialData]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
 
@@ -54,6 +50,8 @@ export const TodoForm: React.FC<TodoFormProps> = ({
         setDescription('');
         setPriority('Medium');
         setDueDate('');
+      } else {
+        onCancel?.();
       }
     } finally {
       setIsLoading(false);
@@ -70,15 +68,6 @@ export const TodoForm: React.FC<TodoFormProps> = ({
         <h2 className="text-xl font-bold">
           {initialData ? 'Edit Task' : 'Add New Task'}
         </h2>
-        {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="text-gray-400 hover:text-gray-600"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        )}
       </div>
 
       <div className="space-y-4">
