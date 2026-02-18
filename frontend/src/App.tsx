@@ -51,6 +51,11 @@ function AppContent() {
     setShowForm(true);
   };
 
+  const onDelete = (id: string) => {
+    deleteTodo(id)
+    setDeletingId(null);
+  };
+
   const closeForm = () => {
     setShowForm(false);
     setEditingTodo(null);
@@ -137,7 +142,7 @@ function AppContent() {
         isOpen={!!deletingId}
         title="Delete Task"
         message="Are you sure you want to delete this task? This action cannot be undone."
-        onConfirm={() => deletingId && deleteTodo(deletingId)}
+        onConfirm={() => deletingId && onDelete(deletingId)}
         onCancel={() => setDeletingId(null)}
       />
     </>
