@@ -11,6 +11,7 @@ import {
 import { StatsCard } from '@/components/ui/StatsCard';
 import { TodoItem } from '@/components/TodoItem';
 import { DailyActivity } from '@/components/DailyActivity';
+import { Skeleton } from '@/components/ui/Skeleton';
 import type { Todo } from '@/types/todo';
 import { useTodos } from '@/hooks/useTodos';
 
@@ -30,6 +31,68 @@ const getGreeting = () => {
   return 'Good evening';
 };
 
+const OverviewSkeleton = () => (
+  <div
+    className="space-y-8 max-w-5xl mx-auto pb-24 lg:pb-0"
+    data-testid="overview-skeleton"
+  >
+    <section>
+      <Skeleton className="h-9 w-64 sm:h-10" />
+      <Skeleton className="mt-2 h-5 w-48" />
+    </section>
+
+    <section className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      {[...Array(4)].map((_, i) => (
+        <div
+          key={i}
+          className="flex flex-col gap-1 rounded-xl border border-gray-200/80 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800/80"
+        >
+          <Skeleton className="h-10 w-10 rounded-xl mb-3" />
+          <Skeleton className="h-8 w-16 mb-1" />
+          <Skeleton className="h-4 w-24" />
+        </div>
+      ))}
+    </section>
+
+    <section className="space-y-4">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-7 w-32" />
+          <Skeleton className="h-5 w-20" />
+        </div>
+        <div className="space-y-3">
+          {[...Array(3)].map((_, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800/80"
+            >
+              <Skeleton className="h-5 w-5 rounded" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-5 w-1/3" />
+                <Skeleton className="h-4 w-1/2" />
+              </div>
+              <Skeleton className="h-8 w-8 rounded-lg" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="rounded-xl border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800/80">
+          <Skeleton className="h-6 w-32 mb-6" />
+          <Skeleton className="h-48 w-full" />
+        </div>
+        <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800/80">
+          <Skeleton className="h-12 w-12 rounded-lg" />
+          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-4 w-48" />
+          <Skeleton className="mt-2 h-10 w-28 rounded-lg" />
+        </div>
+      </div>
+    </section>
+  </div>
+);
+
 export const OverviewTab = ({
   userName,
   onViewAllTasks,
@@ -39,9 +102,14 @@ export const OverviewTab = ({
   onEdit
 }: OverviewTabProps) => {
   const {
+    loading,
     priorityTasks,
     summary: { total, completed, pending, progress }
   } = useTodos();
+
+  if (loading) {
+    return <OverviewSkeleton />;
+  }
 
   const priorityCount = priorityTasks.length;
 

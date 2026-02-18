@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Plus, Filter, Loader2 } from 'lucide-react';
 import { TodoItem } from '@/components/TodoItem';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import type { Todo } from '@/types/todo';
 
@@ -150,14 +151,21 @@ export const MyTasksTab = ({
       </div>
 
       {loading ? (
-        <div
-          className="flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-white py-16 text-center dark:border-gray-700 dark:bg-gray-800/80"
-          data-testid="my-tasks-loading"
-        >
-          <Loader2 className="h-8 w-8 animate-spin text-violet-600 dark:text-violet-400" />
-          <p className="mt-4 text-gray-500 dark:text-gray-400">
-            Loading tasks...
-          </p>
+        <div className="space-y-3" data-testid="my-tasks-skeleton">
+          {[...Array(5)].map((_, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800/80"
+              data-testid="my-tasks-loading"
+            >
+              <Skeleton className="h-5 w-5 rounded" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-5 w-1/3" />
+                <Skeleton className="h-4 w-1/2" />
+              </div>
+              <Skeleton className="h-8 w-8 rounded-lg" />
+            </div>
+          ))}
         </div>
       ) : tasks.length === 0 ? (
         <div

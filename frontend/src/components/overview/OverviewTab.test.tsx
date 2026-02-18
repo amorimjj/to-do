@@ -110,6 +110,20 @@ describe('OverviewTab', () => {
     expect(
       screen.getByText(/You have 6 tasks to complete today./)
     ).toBeInTheDocument();
+    expect(screen.queryByTestId('overview-skeleton')).not.toBeInTheDocument();
+  });
+
+  test('renders skeleton when loading', () => {
+    mockUseTodos.mockReturnValueOnce({
+      summary: mockSummary,
+      loading: true,
+      priorityTasks: []
+    });
+    render(<OverviewTab {...defaultProps} />);
+
+    expect(screen.getByTestId('overview-skeleton')).toBeInTheDocument();
+    expect(screen.queryByText(/Good morning/)).not.toBeInTheDocument();
+    expect(screen.queryByTestId('stats-cards')).not.toBeInTheDocument();
   });
 
   test('displays correct greeting for afternoon', () => {

@@ -61,6 +61,13 @@ describe('MyTasksTab', () => {
     render(<MyTasksTab {...defaultProps} />);
     expect(screen.getByText('Task 1')).toBeInTheDocument();
     expect(screen.getByText('Task 2')).toBeInTheDocument();
+    expect(screen.queryByTestId('my-tasks-skeleton')).not.toBeInTheDocument();
+  });
+
+  test('renders skeleton when loading', () => {
+    render(<MyTasksTab {...defaultProps} loading={true} />);
+    expect(screen.getByTestId('my-tasks-skeleton')).toBeInTheDocument();
+    expect(screen.queryByText('Task 1')).not.toBeInTheDocument();
   });
 
   test('calls onFilterChange when filter tabs clicked', () => {
