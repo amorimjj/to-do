@@ -41,15 +41,11 @@ describe('MyTasksTab', () => {
   const onToggle = jest.fn();
   const onDelete = jest.fn();
   const onEdit = jest.fn();
-  const onAddTask = jest.fn();
-  const onFilterChange = jest.fn();
 
   const defaultProps = {
     onToggle,
     onDelete,
-    onEdit,
-    onAddTask,
-    onFilterChange
+    onEdit
   };
 
   const defaultMockReturn = {
@@ -99,23 +95,29 @@ describe('MyTasksTab', () => {
     expect(screen.queryByText('Task 1')).not.toBeInTheDocument();
   });
 
-  test('calls onFilterChange when filter tabs clicked', () => {
+  test('calls setFilters when filter tabs clicked', () => {
+    const setFilters = jest.fn();
+    mockedUseTodos.mockReturnValue({
+      ...defaultMockReturn,
+      setFilters
+    } as any);
+
     render(<MyTasksTab {...defaultProps} />);
 
     const completedTab = screen.getByTestId('filter-completed');
     fireEvent.click(completedTab);
 
-    expect(onFilterChange).toHaveBeenCalledWith(true);
+    expect(setFilters).toHaveBeenCalledWith({ isCompleted: true });
 
     const pendingTab = screen.getByTestId('filter-pending');
     fireEvent.click(pendingTab);
 
-    expect(onFilterChange).toHaveBeenCalledWith(false);
+    expect(setFilters).toHaveBeenCalledWith({ isCompleted: false });
 
     const allTab = screen.getByTestId('filter-all');
     fireEvent.click(allTab);
 
-    expect(onFilterChange).toHaveBeenCalledWith(undefined);
+    expect(setFilters).toHaveBeenCalledWith({ isCompleted: undefined });
   });
 
   test('shows loading spinner when loadingMore is true', () => {
@@ -147,9 +149,14 @@ describe('MyTasksTab', () => {
     ).not.toBeInTheDocument();
   });
 
-  test('calls onQuickAdd when form submitted', () => {
-    const onQuickAdd = jest.fn();
-    render(<MyTasksTab {...defaultProps} onQuickAdd={onQuickAdd} />);
+  test('calls createTodo when form submitted', () => {
+    const createTodo = jest.fn();
+    mockedUseTodos.mockReturnValue({
+      ...defaultMockReturn,
+      createTodo
+    } as any);
+
+    render(<MyTasksTab {...defaultProps} />);
 
     const input = screen.getByTestId('my-tasks-quick-add');
     fireEvent.change(input, { target: { value: 'New Task' } });
@@ -157,16 +164,12 @@ describe('MyTasksTab', () => {
     const submitButton = screen.getByTestId('my-tasks-quick-add-submit');
     fireEvent.click(submitButton);
 
-    expect(onQuickAdd).toHaveBeenCalledWith('New Task');
+    expect(createTodo).toHaveBeenCalledWith({
+      title: 'New Task',
+      description: null,
+      priority: 'Medium',
+      dueDate: null
+    });
     expect(input).toHaveValue('');
-  });
-
-  test('calls onAddTask when button clicked and onQuickAdd not provided', () => {
-    render(<MyTasksTab {...defaultProps} />);
-
-    const addButton = screen.getByTestId('my-tasks-add-button');
-    fireEvent.click(addButton);
-
-    expect(onAddTask).toHaveBeenCalled();
   });
 });

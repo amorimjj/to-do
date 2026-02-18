@@ -3,18 +3,14 @@ import { Todo } from '@/types/todo';
 import { Trash2, Edit2, Clock4, CheckCircle2, Circle } from 'lucide-react';
 import { format } from 'date-fns';
 
+import { PriorityTag } from './PriorityTag';
+
 interface TodoItemProps {
   todo: Todo;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onEdit: (todo: Todo) => void;
 }
-
-const priorityColors = {
-  Low: 'bg-blue-100 text-blue-700',
-  Medium: 'bg-amber-100 text-amber-700',
-  High: 'bg-rose-100 text-rose-700'
-};
 
 const Tag = ({ children }: { children: ReactNode }) => {
   return (
@@ -55,11 +51,7 @@ export const TodoItem: FC<TodoItemProps> = ({
       </h3>
 
       <div className="flex flex-wrap items-center gap-3 mt-1 text-xs">
-        <span
-          className={`px-2 py-0.5 rounded-full font-medium uppercase tracking-wider ${priorityColors[todo.priority]}`}
-        >
-          {todo.priority}
-        </span>
+        <PriorityTag priority={todo.priority} />
         {todo.dueDate && (
           <Tag>
             <Clock4 className="w-3 h-3" />

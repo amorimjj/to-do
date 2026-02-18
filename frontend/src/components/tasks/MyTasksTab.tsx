@@ -14,8 +14,6 @@ type MyTasksTabProps = {
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onEdit: (todo: Todo) => void;
-  onAddTask: () => void;
-  onQuickAdd?: (title: string) => void;
 };
 
 export const MyTasksTab = ({ onToggle, onDelete, onEdit }: MyTasksTabProps) => {

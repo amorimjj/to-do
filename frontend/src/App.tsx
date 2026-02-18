@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { ThemeProvider } from '@/contexts/theme';
 import { TodosProvider } from '@/contexts/todos';
@@ -18,24 +18,12 @@ import type { Todo } from '@/types/todo';
 
 function AppContent() {
   const { activeTab, isInvalidRoute, navigateToTasks } = useNavigate();
-  const { toggleTodo, deleteTodo, createTodo } = useTodos();
+  const { toggleTodo, deleteTodo } = useTodos();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  const quickAdd = useCallback(
-    (title: string) => {
-      createTodo({
-        title,
-        description: null,
-        priority: 'Medium',
-        dueDate: null
-      });
-    },
-    [createTodo]
-  );
 
   const openNewTask = () => {
     setEditingTodo(null);
@@ -80,8 +68,6 @@ function AppContent() {
             onToggle={toggleTodo}
             onDelete={setDeletingId}
             onEdit={openEdit}
-            onAddTask={openNewTask}
-            onQuickAdd={quickAdd}
           />
         );
       case 'planner':
