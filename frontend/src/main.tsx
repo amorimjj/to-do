@@ -1,12 +1,12 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
-import { logger } from './services/logger'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import './index.css';
+import App from './App.tsx';
+import { logger } from './utils/logger';
 
-// Catch all global unhandled errors
 window.addEventListener('error', (event) => {
-  logger.error('Unhandled Global Error', event.error || event.message);
+  logger.error('Unhandled Global Error', event.error ?? event.message);
 });
 
 window.addEventListener('unhandledrejection', (event) => {
@@ -15,6 +15,8 @@ window.addEventListener('unhandledrejection', (event) => {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
-  </StrictMode>,
-)
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StrictMode>
+);

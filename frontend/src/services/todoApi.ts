@@ -1,14 +1,21 @@
 import axios, { AxiosError } from 'axios';
-import { CreateTodoRequest, PagedResponse, Todo, TodoFilters, UpdateTodoRequest } from '@/types/todo';
-import { logger } from './logger';
-
-const API_BASE = (import.meta.env.VITE_API_URL as string) || 'http://localhost:5000/api';
+import { ENV } from '@/config/env';
+import {
+  CreateTodoRequest,
+  PagedResponse,
+  Todo,
+  TodoFilters,
+  TodoSummary,
+  UpdateTodoRequest,
+  WeeklySummary
+} from '@/types/todo';
+import { logger } from '../utils/logger';
 
 const api = axios.create({
-  baseURL: API_BASE,
+  baseURL: ENV.API_URL,
   headers: {
-    'Content-Type': 'application/json',
-  },
+    'Content-Type': 'application/json'
+  }
 });
 
 // Trace all API errors
@@ -20,18 +27,80 @@ api.interceptors.response.use(
       method: error.config?.method,
       status: error.response?.status,
       statusText: error.response?.statusText,
-      data: error.response?.data,
+      data: error.response?.data
     });
     return Promise.reject(error);
   }
 );
 
+type TodoSummaryApiResponse = {
+  Total?: number;
+  Completed?: number;
+  Pending?: number;
+  total?: number;
+  completed?: number;
+  pending?: number;
+};
+
+const mapSummaryResponse = (raw: TodoSummaryApiResponse): TodoSummary => {
+  const total = raw.Total ?? raw.total ?? 0;
+  const completed = raw.Completed ?? raw.completed ?? 0;
+  const pending = raw.Pending ?? raw.pending ?? 0;
+  const progress = total === 0 ? 0 : completed / total;
+  return { total, completed, pending, progress };
+};
+
+type DaySummaryApiResponse = {
+  Total?: number;
+  Completed?: number;
+  total?: number;
+  completed?: number;
+};
+
+type WeeklySummaryApiResponse = {
+  Sunday?: DaySummaryApiResponse;
+  Monday?: DaySummaryApiResponse;
+  Tuesday?: DaySummaryApiResponse;
+  Wednesday?: DaySummaryApiResponse;
+  Thursday?: DaySummaryApiResponse;
+  Friday?: DaySummaryApiResponse;
+  Saturday?: DaySummaryApiResponse;
+  sunday?: DaySummaryApiResponse;
+  monday?: DaySummaryApiResponse;
+  tuesday?: DaySummaryApiResponse;
+  wednesday?: DaySummaryApiResponse;
+  thursday?: DaySummaryApiResponse;
+  friday?: DaySummaryApiResponse;
+  saturday?: DaySummaryApiResponse;
+};
+
+const mapDaySummaryResponse = (raw: DaySummaryApiResponse = {}) => ({
+  total: raw.Total ?? raw.total ?? 0,
+  completed: raw.Completed ?? raw.completed ?? 0
+});
+
+const mapWeeklySummaryResponse = (
+  raw: WeeklySummaryApiResponse
+): WeeklySummary => {
+  return {
+    sunday: mapDaySummaryResponse(raw.Sunday ?? raw.sunday),
+    monday: mapDaySummaryResponse(raw.Monday ?? raw.monday),
+    tuesday: mapDaySummaryResponse(raw.Tuesday ?? raw.tuesday),
+    wednesday: mapDaySummaryResponse(raw.Wednesday ?? raw.wednesday),
+    thursday: mapDaySummaryResponse(raw.Thursday ?? raw.thursday),
+    friday: mapDaySummaryResponse(raw.Friday ?? raw.friday),
+    saturday: mapDaySummaryResponse(raw.Saturday ?? raw.saturday)
+  };
+};
+
 export const todoApi = {
   list: async (filters: TodoFilters): Promise<PagedResponse<Todo>> => {
     const params = new URLSearchParams();
     if (filters.page) params.append('page', filters.page.toString());
-    if (filters.pageSize) params.append('pageSize', filters.pageSize.toString());
-    if (filters.isCompleted !== undefined) params.append('isCompleted', filters.isCompleted.toString());
+    if (filters.pageSize)
+      params.append('pageSize', filters.pageSize.toString());
+    if (filters.isCompleted !== undefined)
+      params.append('isCompleted', filters.isCompleted.toString());
     if (filters.priority) params.append('priority', filters.priority);
     if (filters.sortBy) params.append('sortBy', filters.sortBy);
     if (filters.sortOrder) params.append('sortOrder', filters.sortOrder);
@@ -43,6 +112,18 @@ export const todoApi = {
   getById: async (id: string): Promise<Todo> => {
     const response = await api.get<Todo>(`/todos/${id}`);
     return response.data;
+  },
+
+  summary: async (): Promise<TodoSummary> => {
+    const response = await api.get<TodoSummaryApiResponse>('/todos/summary');
+    return mapSummaryResponse(response.data);
+  },
+
+  weeklySummary: async (): Promise<WeeklySummary> => {
+    const response = await api.get<WeeklySummaryApiResponse>(
+      '/todos/weekly-summary'
+    );
+    return mapWeeklySummaryResponse(response.data);
   },
 
   create: async (data: CreateTodoRequest): Promise<Todo> => {
@@ -62,5 +143,5 @@ export const todoApi = {
 
   delete: async (id: string): Promise<void> => {
     await api.delete(`/todos/${id}`);
-  },
+  }
 };
