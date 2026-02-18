@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Todo.Models;
+using TaskFlow.Todo.Models;
 using System.Reflection;
 
-namespace Infrastructure.Data;
+namespace TaskFlow.Infrastructure.Data;
 
 public class AppDbContext : DbContext
 {

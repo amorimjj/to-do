@@ -1,4 +1,4 @@
-namespace Shared.CQRS;
+namespace TaskFlow.Shared.CQRS;
 
 public interface ICommandHandler<in TCommand, TResult> where TCommand : ICommand<TResult>
 {

@@ -5,7 +5,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Api.Infrastructure;
+namespace TaskFlow.Api.Infrastructure;
 
 public class FeatureGateDocumentFilter : IDocumentFilter
 {

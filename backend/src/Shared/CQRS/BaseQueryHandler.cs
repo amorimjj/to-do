@@ -1,6 +1,6 @@
-using Infrastructure.Data;
+using TaskFlow.Infrastructure.Data;
 
-namespace Shared.CQRS;
+namespace TaskFlow.Shared.CQRS;
 
 public abstract class BaseQueryHandler<TQuery, TResult> : BaseHandler, IQueryHandler<TQuery, TResult>
     where TQuery : IQuery<TResult>

@@ -1,4 +1,4 @@
-namespace Todo.Models;
+namespace TaskFlow.Todo.Models;
 
 public class TodoItem
 {

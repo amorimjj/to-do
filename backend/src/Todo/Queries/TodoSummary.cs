@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Shared.CQRS;
-using Infrastructure.Data;
-using Api.DTOs;
+using TaskFlow.Shared.CQRS;
+using TaskFlow.Infrastructure.Data;
+using TaskFlow.Todo.Models;
 
-namespace Todo.Queries;
+namespace TaskFlow.Todo.Queries;
 
 public record TodoSummaryQuery : IQuery<TodoSummaryResponse>;
 

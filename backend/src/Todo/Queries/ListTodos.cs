@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using Shared.CQRS;
-using Infrastructure.Data;
-using Api.DTOs;
-using Todo.Models;
+using TaskFlow.Shared.CQRS;
+using TaskFlow.Infrastructure.Data;
+using TaskFlow.Shared;
+using TaskFlow.Todo.Models;
 
-namespace Todo.Queries;
+namespace TaskFlow.Todo.Queries;
 
 public record ListTodosQuery(
     int Page = 1,

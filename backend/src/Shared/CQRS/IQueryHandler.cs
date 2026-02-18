@@ -1,4 +1,4 @@
-namespace Shared.CQRS;
+namespace TaskFlow.Shared.CQRS;
 
 public interface IQueryHandler<in TQuery, TResult> where TQuery : IQuery<TResult>
 {

@@ -1,12 +1,12 @@
 using System.Reflection;
 using Microsoft.FeatureManagement;
 using Microsoft.EntityFrameworkCore;
-using Shared.CQRS;
-using Api.Middleware;
+using TaskFlow.Shared.CQRS;
+using TaskFlow.Api.Middleware;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Infrastructure.Data;
-using Api.Infrastructure;
+using TaskFlow.Infrastructure.Data;
+using TaskFlow.Api.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

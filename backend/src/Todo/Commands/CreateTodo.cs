@@ -1,11 +1,10 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Shared.CQRS;
-using Infrastructure.Data;
-using Api.DTOs;
-using Todo.Models;
+using TaskFlow.Shared.CQRS;
+using TaskFlow.Infrastructure.Data;
+using TaskFlow.Todo.Models;
 
-namespace Todo.Commands;
+namespace TaskFlow.Todo.Commands;
 
 public record CreateTodoCommand(
     string Title,

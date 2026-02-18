@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
-using Shared.CQRS;
-using Api.Controllers;
-using Todo.Commands;
-using Api.DTOs;
-using Todo.Queries;
-using Todo.Models;
+using TaskFlow.Api.Controllers;
+using TaskFlow.Shared;
+using TaskFlow.Shared.CQRS;
+using TaskFlow.Todo.Commands;
+using TaskFlow.Api.DTOs;
+using TaskFlow.Todo.Queries;
+using TaskFlow.Todo.Models;
 
 namespace TaskFlow.Tests.Controllers;
 
@@ -21,7 +22,7 @@ public class TodosControllerTests
     private Mock<IQueryHandler<ListTodosQuery, PagedResponse<TodoResponse>>> _listTodosHandler;
     private Mock<IQueryHandler<TodoSummaryQuery, TodoSummaryResponse>> _todoSummaryHandler;
     private Mock<IQueryHandler<WeeklySummaryQuery, WeeklySummaryResponse>> _weeklySummaryHandler;
-    private TodosController _controller;
+    private TaskFlow.Api.Controllers.TodosController _controller;
 
     [SetUp]
     public void SetUp()
@@ -35,7 +36,7 @@ public class TodosControllerTests
         _todoSummaryHandler = new Mock<IQueryHandler<TodoSummaryQuery, TodoSummaryResponse>>();
         _weeklySummaryHandler = new Mock<IQueryHandler<WeeklySummaryQuery, WeeklySummaryResponse>>();
 
-        _controller = new TodosController(
+        _controller = new TaskFlow.Api.Controllers.TodosController(
             _createTodoHandler.Object,
             _updateTodoHandler.Object,
             _toggleTodoHandler.Object,

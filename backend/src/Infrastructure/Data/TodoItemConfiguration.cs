@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Todo.Models;
+using TaskFlow.Todo.Models;
 
-namespace Infrastructure.Data;
+namespace TaskFlow.Infrastructure.Data;
 
 public class TodoItemConfiguration : IEntityTypeConfiguration<TodoItem>
 {

@@ -2,7 +2,7 @@ using System.Net;
 using System.Text.Json;
 using FluentValidation;
 
-namespace Api.Middleware;
+namespace TaskFlow.Api.Middleware;
 
 public class ExceptionHandlingMiddleware
 {

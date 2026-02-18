@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Shared.CQRS;
-using Infrastructure.Data;
-using Todo.Models;
+using TaskFlow.Shared.CQRS;
+using TaskFlow.Infrastructure.Data;
+using TaskFlow.Todo.Models;
 
-namespace Todo.Commands;
+namespace TaskFlow.Todo.Commands;
 
 public record DeleteTodoCommand(Guid Id) : ICommand<bool>;
 

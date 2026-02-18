@@ -1,8 +1,8 @@
 using NUnit.Framework;
-using Todo.Queries;
-using Todo.Models;
+using TaskFlow.Todo.Queries;
+using TaskFlow.Todo.Models;
 using TaskFlow.Tests.Helpers;
-using Infrastructure.Data;
+using TaskFlow.Infrastructure.Data;
 
 namespace TaskFlow.Tests.Queries;
 

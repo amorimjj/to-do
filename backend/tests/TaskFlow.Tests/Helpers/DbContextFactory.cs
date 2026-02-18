@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Infrastructure.Data;
+using TaskFlow.Infrastructure.Data;
 using Moq;
 
 namespace TaskFlow.Tests.Helpers;

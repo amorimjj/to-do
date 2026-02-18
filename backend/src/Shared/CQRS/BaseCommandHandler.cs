@@ -1,6 +1,6 @@
-using Infrastructure.Data;
+using TaskFlow.Infrastructure.Data;
 
-namespace Shared.CQRS;
+namespace TaskFlow.Shared.CQRS;
 
 public abstract class BaseCommandHandler<TCommand, TResult> : BaseHandler, ICommandHandler<TCommand, TResult>
     where TCommand : ICommand<TResult>

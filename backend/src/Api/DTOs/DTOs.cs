@@ -1,6 +1,6 @@
-using Todo.Models;
+using TaskFlow.Todo.Models;
 
-namespace Api.DTOs;
+namespace TaskFlow.Api.DTOs;
 
 public record CreateTodoRequest(
     string Title,
@@ -15,41 +15,4 @@ public record UpdateTodoRequest(
     Priority Priority,
     DateTime? DueDate,
     bool IsCompleted
-);
-
-public record TodoResponse(
-    Guid Id,
-    string Title,
-    string? Description,
-    bool IsCompleted,
-    Priority Priority,
-    DateTime? DueDate,
-    DateTime CreatedAt,
-    DateTime UpdatedAt
-);
-
-public record PagedResponse<T>(
-    IEnumerable<T> Items,
-    int Page,
-    int PageSize,
-    int TotalCount,
-    int TotalPages
-);
-
-public record TodoSummaryResponse(
-    int TotalCount,
-    int CompletedCount,
-    int PendingCount
-);
-
-public record DaySummary(int Total, int Completed);
-
-public record WeeklySummaryResponse(
-    DaySummary Sunday,
-    DaySummary Monday,
-    DaySummary Tuesday,
-    DaySummary Wednesday,
-    DaySummary Thursday,
-    DaySummary Friday,
-    DaySummary Saturday
 );

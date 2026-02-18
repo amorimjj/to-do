@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace Shared.CQRS;
+namespace TaskFlow.Shared.CQRS;
 
 public static class ServiceCollectionExtensions
 {
