@@ -105,7 +105,6 @@ function AppContent() {
       <div className="min-h-screen lg:pl-56">
         <Header
           onMenuClick={() => setSidebarOpen(true)}
-          showNewTask={activeTab === 'tasks'}
           onNewTask={openNewTask}
         />
         <main className="px-4 py-6 lg:px-8">{renderContent()}</main>

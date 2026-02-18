@@ -7,7 +7,7 @@ const priorityColors: Record<Priority, string> = {
 type Priority = 'Low' | 'Medium' | 'High';
 
 type PriorityTagProps = {
-size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg';
   priority: Priority;
 };
 

@@ -19,9 +19,18 @@ type PriorityButtonProps = {
   onClick: () => void;
 };
 
-const PriorityButton = ({ priority, selected, onClick }: PriorityButtonProps) => (
-  <button data-selected={selected} type="button" className='cursor-pointer rounded-full data-[selected=true]:ring-2 data-[selected=true]:ring-blue-500 outline-none' onClick={onClick}>
-    <PriorityTag size='lg' priority={priority} />
+const PriorityButton = ({
+  priority,
+  selected,
+  onClick
+}: PriorityButtonProps) => (
+  <button
+    data-selected={selected}
+    type="button"
+    className="cursor-pointer rounded-full data-[selected=true]:ring-2 data-[selected=true]:ring-blue-500 outline-none"
+    onClick={onClick}
+  >
+    <PriorityTag size="lg" priority={priority} />
   </button>
 );
 
@@ -125,9 +134,21 @@ export const TodoForm: FC<TodoFormProps> = ({ initialData, onCancel }) => {
               Priority
             </label>
             <div className="flex gap-4 mt-1 text-base pt-3 py-2 justify-around">
-              <PriorityButton priority='Low' selected={priority === 'Low'} onClick={() => setPriority('Low')} />
-              <PriorityButton priority='Medium' selected={priority === 'Medium'} onClick={() => setPriority('Medium')} />
-              <PriorityButton priority='High' selected={priority === 'High'} onClick={() => setPriority('High')} />
+              <PriorityButton
+                priority="Low"
+                selected={priority === 'Low'}
+                onClick={() => setPriority('Low')}
+              />
+              <PriorityButton
+                priority="Medium"
+                selected={priority === 'Medium'}
+                onClick={() => setPriority('Medium')}
+              />
+              <PriorityButton
+                priority="High"
+                selected={priority === 'High'}
+                onClick={() => setPriority('High')}
+              />
             </div>
           </div>
         </div>
