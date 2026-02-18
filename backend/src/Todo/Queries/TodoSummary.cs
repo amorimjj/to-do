@@ -19,6 +19,10 @@ public class TodoSummaryHandler : BaseQueryHandler<TodoSummaryQuery, TodoSummary
         var completedCount = await _context.TodoItems.AsNoTracking().CountAsync(t => t.IsCompleted, ct);
         var pendingCount = totalCount - completedCount;
 
-        return new TodoSummaryResponse(totalCount, completedCount, pendingCount);
+        return new TodoSummaryResponse(
+            Total: totalCount,
+            Completed: completedCount,
+            Pending: pendingCount
+        );
     }
 }

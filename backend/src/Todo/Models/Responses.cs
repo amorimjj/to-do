@@ -12,9 +12,9 @@ public record TodoResponse(
 );
 
 public record TodoSummaryResponse(
-    int TotalCount,
-    int CompletedCount,
-    int PendingCount
+    int Total,
+    int Completed,
+    int Pending
 );
 
 public record DaySummary(int Total, int Completed);
