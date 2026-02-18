@@ -16,7 +16,6 @@ type MyTasksTabProps = {
   onEdit: (todo: Todo) => void;
   onAddTask: () => void;
   onQuickAdd?: (title: string) => void;
-  onFilterChange: (isCompleted?: boolean) => void;
 };
 
 export const MyTasksTab = ({
@@ -25,12 +24,11 @@ export const MyTasksTab = ({
   onEdit,
   onAddTask,
   onQuickAdd,
-  onFilterChange
 }: MyTasksTabProps) => {
   const [filter, setFilter] = useState<FilterStatus>('all');
   const [quickInput, setQuickInput] = useState('');
 
-  const { todos, loadingMore, loading, hasMore, loadMore } = useTodos();
+  const { todos, loadingMore, loading, hasMore, loadMore, setFilters } = useTodos();
 
   const { sentinelRef } = useInfiniteScroll({
     onLoadMore: () => loadMore(),
@@ -40,9 +38,9 @@ export const MyTasksTab = ({
 
   const handleFilterClick = (status: FilterStatus) => {
     setFilter(status);
-    if (status === 'all') onFilterChange(undefined);
-    else if (status === 'completed') onFilterChange(true);
-    else onFilterChange(false);
+    if (status === 'all') setFilters({ isCompleted: undefined });
+    else if (status === 'completed') setFilters({ isCompleted: true });
+    else setFilters({ isCompleted: false });
   };
 
   const handleQuickSubmit = (e: React.FormEvent) => {

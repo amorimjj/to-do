@@ -22,8 +22,6 @@ function AppContent() {
     toggleTodo,
     deleteTodo,
     createTodo,
-    loadMore,
-    setFilters
   } = useTodos();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -41,13 +39,6 @@ function AppContent() {
       });
     },
     [createTodo]
-  );
-
-  const handleFilterChange = useCallback(
-    (isCompleted?: boolean) => {
-      setFilters({ isCompleted });
-    },
-    [setFilters]
   );
 
   const openNewTask = () => {
@@ -90,7 +81,6 @@ function AppContent() {
             onEdit={openEdit}
             onAddTask={openNewTask}
             onQuickAdd={quickAdd}
-            onFilterChange={handleFilterChange}
           />
         );
       case 'planner':
