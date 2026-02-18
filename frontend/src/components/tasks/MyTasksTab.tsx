@@ -110,18 +110,21 @@ export const MyTasksTab = ({ onToggle, onDelete, onEdit }: MyTasksTabProps) => {
           <FilterButton
             selected={filter === 'all'}
             onClick={() => handleFilterClick('all')}
+            data-testid="filter-all"
           >
             All
           </FilterButton>
           <FilterButton
             selected={filter === 'pending'}
             onClick={() => handleFilterClick('pending')}
+            data-testid="filter-pending"
           >
             Pending
           </FilterButton>
           <FilterButton
             selected={filter === 'completed'}
             onClick={() => handleFilterClick('completed')}
+            data-testid="filter-completed"
           >
             Completed
           </FilterButton>

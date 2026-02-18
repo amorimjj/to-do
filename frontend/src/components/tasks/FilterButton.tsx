@@ -4,15 +4,18 @@ type FilterButtonProps = {
   children: ReactNode;
   onClick: () => void;
   selected: boolean;
+  'data-testid'?: string;
 };
 
 export const FilterButton = ({
   children,
   onClick,
-  selected
+  selected,
+  'data-testid': testId
 }: FilterButtonProps) => (
   <button
     data-selected={selected}
+    data-testid={testId}
     type="button"
     onClick={onClick}
     className="group pb-4 text-sm font-bold capitalize transition-all relative cursor-pointer data-[selected=false]:text-zinc-400 data-[selected=false]:hover:text-zinc-600"
