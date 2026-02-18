@@ -1,6 +1,11 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MyTasksTab } from './MyTasksTab';
 import { Todo } from '@/types/todo';
+import { useTodos } from '@/hooks/useTodos';
+
+// Mock useTodos hook
+jest.mock('@/hooks/useTodos');
+const mockedUseTodos = useTodos as jest.MockedFunction<typeof useTodos>;
 
 const mockTasks: Todo[] = [
   {
@@ -37,24 +42,43 @@ describe('MyTasksTab', () => {
   const onDelete = jest.fn();
   const onEdit = jest.fn();
   const onAddTask = jest.fn();
-  const onLoadMore = jest.fn();
   const onFilterChange = jest.fn();
 
   const defaultProps = {
-    tasks: mockTasks,
     onToggle,
     onDelete,
     onEdit,
     onAddTask,
-    onLoadMore,
-    hasMore: true,
+    onFilterChange
+  };
+
+  const defaultMockReturn = {
+    todos: mockTasks,
     loadingMore: false,
-    onFilterChange,
-    loading: false
+    loading: false,
+    hasMore: true,
+    loadMore: jest.fn(),
+    priorityTasks: [],
+    totalCount: 2,
+    totalPages: 1,
+    currentPage: 1,
+    error: null,
+    filters: {},
+    summary: { total: 2, completed: 1, pending: 1, progress: 0.5 },
+    weeklySummary: null,
+    createTodo: jest.fn(),
+    updateTodo: jest.fn(),
+    toggleTodo: jest.fn(),
+    deleteTodo: jest.fn(),
+    setFilters: jest.fn(),
+    refresh: jest.fn(),
+    getSummary: jest.fn(),
+    getWeeklySummary: jest.fn()
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockedUseTodos.mockReturnValue(defaultMockReturn as any);
   });
 
   test('renders tasks correctly', () => {
@@ -65,7 +89,12 @@ describe('MyTasksTab', () => {
   });
 
   test('renders skeleton when loading', () => {
-    render(<MyTasksTab {...defaultProps} loading={true} />);
+    mockedUseTodos.mockReturnValue({
+      ...defaultMockReturn,
+      loading: true,
+      todos: []
+    } as any);
+    render(<MyTasksTab {...defaultProps} />);
     expect(screen.getByTestId('my-tasks-skeleton')).toBeInTheDocument();
     expect(screen.queryByText('Task 1')).not.toBeInTheDocument();
   });
@@ -90,19 +119,54 @@ describe('MyTasksTab', () => {
   });
 
   test('shows loading spinner when loadingMore is true', () => {
-    render(<MyTasksTab {...defaultProps} loadingMore={true} />);
+    mockedUseTodos.mockReturnValue({
+      ...defaultMockReturn,
+      loadingMore: true
+    } as any);
+    render(<MyTasksTab {...defaultProps} />);
     expect(screen.getByTestId('loading-more')).toBeInTheDocument();
   });
 
   test('renders sentinel when hasMore is true', () => {
-    render(<MyTasksTab {...defaultProps} hasMore={true} />);
+    mockedUseTodos.mockReturnValue({
+      ...defaultMockReturn,
+      hasMore: true
+    } as any);
+    render(<MyTasksTab {...defaultProps} />);
     expect(screen.getByTestId('infinite-scroll-sentinel')).toBeInTheDocument();
   });
 
   test('does not render sentinel when hasMore is false', () => {
-    render(<MyTasksTab {...defaultProps} hasMore={false} />);
+    mockedUseTodos.mockReturnValue({
+      ...defaultMockReturn,
+      hasMore: false
+    } as any);
+    render(<MyTasksTab {...defaultProps} />);
     expect(
       screen.queryByTestId('infinite-scroll-sentinel')
     ).not.toBeInTheDocument();
+  });
+
+  test('calls onQuickAdd when form submitted', () => {
+    const onQuickAdd = jest.fn();
+    render(<MyTasksTab {...defaultProps} onQuickAdd={onQuickAdd} />);
+
+    const input = screen.getByTestId('my-tasks-quick-add');
+    fireEvent.change(input, { target: { value: 'New Task' } });
+
+    const submitButton = screen.getByTestId('my-tasks-quick-add-submit');
+    fireEvent.click(submitButton);
+
+    expect(onQuickAdd).toHaveBeenCalledWith('New Task');
+    expect(input).toHaveValue('');
+  });
+
+  test('calls onAddTask when button clicked and onQuickAdd not provided', () => {
+    render(<MyTasksTab {...defaultProps} />);
+
+    const addButton = screen.getByTestId('my-tasks-add-button');
+    fireEvent.click(addButton);
+
+    expect(onAddTask).toHaveBeenCalled();
   });
 });

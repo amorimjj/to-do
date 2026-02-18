@@ -19,14 +19,10 @@ import type { Todo } from '@/types/todo';
 function AppContent() {
   const { activeTab, isInvalidRoute, navigateToTasks } = useNavigate();
   const {
-    todos,
     toggleTodo,
     deleteTodo,
     createTodo,
-    loading,
     loadMore,
-    hasMore,
-    loadingMore,
     setFilters
   } = useTodos();
 
@@ -89,16 +85,11 @@ function AppContent() {
       case 'tasks':
         return (
           <MyTasksTab
-            tasks={todos}
             onToggle={toggleTodo}
             onDelete={setDeletingId}
             onEdit={openEdit}
             onAddTask={openNewTask}
             onQuickAdd={quickAdd}
-            loading={loading}
-            onLoadMore={loadMore}
-            hasMore={hasMore}
-            loadingMore={loadingMore}
             onFilterChange={handleFilterChange}
           />
         );

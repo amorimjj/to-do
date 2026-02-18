@@ -6,41 +6,34 @@ import { TodoItem } from '@/components/TodoItem';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import type { Todo } from '@/types/todo';
+import { useTodos } from '@/hooks/useTodos';
 
 type FilterStatus = 'all' | 'pending' | 'completed';
 
 type MyTasksTabProps = {
-  tasks: Todo[];
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
   onEdit: (todo: Todo) => void;
   onAddTask: () => void;
   onQuickAdd?: (title: string) => void;
-  loading?: boolean;
-  onLoadMore: () => void;
-  hasMore: boolean;
-  loadingMore: boolean;
   onFilterChange: (isCompleted?: boolean) => void;
 };
 
 export const MyTasksTab = ({
-  tasks,
   onToggle,
   onDelete,
   onEdit,
   onAddTask,
   onQuickAdd,
-  loading,
-  onLoadMore,
-  hasMore,
-  loadingMore,
   onFilterChange
 }: MyTasksTabProps) => {
   const [filter, setFilter] = useState<FilterStatus>('all');
   const [quickInput, setQuickInput] = useState('');
 
+  const { todos, loadingMore, loading, hasMore, loadMore } = useTodos();
+
   const { sentinelRef } = useInfiniteScroll({
-    onLoadMore,
+    onLoadMore: () => loadMore(),
     hasMore,
     loading: loading || loadingMore
   });
@@ -167,7 +160,7 @@ export const MyTasksTab = ({
             </div>
           ))}
         </div>
-      ) : tasks.length === 0 ? (
+      ) : todos.length === 0 ? (
         <div
           className="flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-white py-16 text-center dark:border-gray-700 dark:bg-gray-800/80"
           data-testid="my-tasks-empty"
@@ -182,7 +175,7 @@ export const MyTasksTab = ({
         </div>
       ) : (
         <div className="space-y-3" data-testid="todo-list">
-          {tasks.map((todo) => (
+          {todos.map((todo) => (
             <TodoItem
               key={todo.id}
               todo={todo}
