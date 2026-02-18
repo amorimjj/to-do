@@ -18,6 +18,7 @@ public class TodosController : ControllerBase
     private readonly IQueryHandler<GetTodoByIdQuery, TodoResponse?> _getTodoByIdHandler;
     private readonly IQueryHandler<ListTodosQuery, PagedResponse<TodoResponse>> _listTodosHandler;
     private readonly IQueryHandler<TodoSummaryQuery, TodoSummaryResponse> _todoSummaryHandler;
+    private readonly IQueryHandler<WeeklySummaryQuery, WeeklySummaryResponse> _weeklySummaryHandler;
 
     public TodosController(
         ICommandHandler<CreateTodoCommand, TodoResponse> createTodoHandler,
@@ -26,7 +27,8 @@ public class TodosController : ControllerBase
         ICommandHandler<DeleteTodoCommand, bool> deleteTodoHandler,
         IQueryHandler<GetTodoByIdQuery, TodoResponse?> getTodoByIdHandler,
         IQueryHandler<ListTodosQuery, PagedResponse<TodoResponse>> listTodosHandler,
-        IQueryHandler<TodoSummaryQuery, TodoSummaryResponse> todoSummaryHandler)
+        IQueryHandler<TodoSummaryQuery, TodoSummaryResponse> todoSummaryHandler,
+        IQueryHandler<WeeklySummaryQuery, WeeklySummaryResponse> weeklySummaryHandler)
     {
         _createTodoHandler = createTodoHandler;
         _updateTodoHandler = updateTodoHandler;
@@ -35,6 +37,7 @@ public class TodosController : ControllerBase
         _getTodoByIdHandler = getTodoByIdHandler;
         _listTodosHandler = listTodosHandler;
         _todoSummaryHandler = todoSummaryHandler;
+        _weeklySummaryHandler = weeklySummaryHandler;
     }
 
     [HttpGet]
@@ -55,6 +58,13 @@ public class TodosController : ControllerBase
     public async Task<ActionResult<TodoSummaryResponse>> Summary()
     {
         var result = await _todoSummaryHandler.HandleAsync(new TodoSummaryQuery());
+        return Ok(result);
+    }
+
+    [HttpGet("weekly-summary")]
+    public async Task<ActionResult<WeeklySummaryResponse>> WeeklySummary()
+    {
+        var result = await _weeklySummaryHandler.HandleAsync(new WeeklySummaryQuery());
         return Ok(result);
     }
 

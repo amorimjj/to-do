@@ -20,6 +20,7 @@ public class TodosControllerTests
     private Mock<IQueryHandler<GetTodoByIdQuery, TodoResponse?>> _getTodoByIdHandler;
     private Mock<IQueryHandler<ListTodosQuery, PagedResponse<TodoResponse>>> _listTodosHandler;
     private Mock<IQueryHandler<TodoSummaryQuery, TodoSummaryResponse>> _todoSummaryHandler;
+    private Mock<IQueryHandler<WeeklySummaryQuery, WeeklySummaryResponse>> _weeklySummaryHandler;
     private TodosController _controller;
 
     [SetUp]
@@ -32,6 +33,7 @@ public class TodosControllerTests
         _getTodoByIdHandler = new Mock<IQueryHandler<GetTodoByIdQuery, TodoResponse?>>();
         _listTodosHandler = new Mock<IQueryHandler<ListTodosQuery, PagedResponse<TodoResponse>>>();
         _todoSummaryHandler = new Mock<IQueryHandler<TodoSummaryQuery, TodoSummaryResponse>>();
+        _weeklySummaryHandler = new Mock<IQueryHandler<WeeklySummaryQuery, WeeklySummaryResponse>>();
 
         _controller = new TodosController(
             _createTodoHandler.Object,
@@ -40,7 +42,8 @@ public class TodosControllerTests
             _deleteTodoHandler.Object,
             _getTodoByIdHandler.Object,
             _listTodosHandler.Object,
-            _todoSummaryHandler.Object);
+            _todoSummaryHandler.Object,
+            _weeklySummaryHandler.Object);
     }
 
     [Test]
@@ -236,6 +239,33 @@ public class TodosControllerTests
 
         // Act
         var result = await _controller.Summary();
+
+        // Assert
+        Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
+        var okResult = (OkObjectResult)result.Result;
+        Assert.That(okResult.Value, Is.EqualTo(response));
+    }
+
+    [Test]
+    public async Task WeeklySummary_ReturnsOkWithWeeklySummaryResponse()
+    {
+        // Arrange
+        var response = new WeeklySummaryResponse(
+            new DaySummary(0, 0),
+            new DaySummary(1, 1),
+            new DaySummary(0, 0),
+            new DaySummary(0, 0),
+            new DaySummary(0, 0),
+            new DaySummary(0, 0),
+            new DaySummary(0, 0)
+        );
+
+        _weeklySummaryHandler
+            .Setup(h => h.HandleAsync(It.IsAny<WeeklySummaryQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _controller.WeeklySummary();
 
         // Assert
         Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
