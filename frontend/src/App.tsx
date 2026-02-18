@@ -15,6 +15,7 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { ModalBox } from '@/components/ModalBox';
 import { MOCK_USER_NAME } from '@/data/mockTasks';
 import type { Todo } from '@/types/todo';
+import { Settings } from '@/components/settings/Settings';
 
 function AppContent() {
   const { activeTab, isInvalidRoute, navigateToTasks } = useNavigate();
@@ -82,13 +83,7 @@ function AppContent() {
         );
       case 'settings':
         return (
-          <div
-            className="flex flex-col items-center justify-center py-24 text-gray-500 dark:text-gray-400"
-            data-testid="settings-placeholder"
-          >
-            <p className="font-medium">Settings</p>
-            <p className="text-sm">Coming soon.</p>
-          </div>
+          <Settings />
         );
       default:
         return null;

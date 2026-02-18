@@ -20,7 +20,7 @@ export const Header = ({
 
   const { setFilters } = useTodos();
 
-   useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       setFilters({ search: searchQuery || undefined });
     }, 300);

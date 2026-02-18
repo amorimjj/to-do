@@ -79,8 +79,9 @@ describe('todoApi', () => {
         params: expect.any(URLSearchParams)
       })
     );
-    
-    const params = mockApiInstance.get.mock.calls[0][1]?.params as URLSearchParams;
+
+    const params = mockApiInstance.get.mock.calls[0][1]
+      ?.params as URLSearchParams;
     expect(params.get('search')).toBe('test query');
   });
 

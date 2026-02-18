@@ -16,12 +16,12 @@ describe('Header', () => {
   const toggleTheme = jest.fn();
 
   const defaultMockTodos = {
-    setFilters,
+    setFilters
   };
 
   const defaultMockTheme = {
     theme: 'light',
-    toggleTheme,
+    toggleTheme
   };
 
   beforeEach(() => {
@@ -43,12 +43,20 @@ describe('Header', () => {
     expect(screen.getByTestId('header-new-task')).toBeInTheDocument();
     expect(screen.getByTestId('theme-toggle')).toBeInTheDocument();
     expect(screen.getByTestId('header-user')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Search tasks by title...')).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText('Search tasks by title...')
+    ).toBeInTheDocument();
   });
 
   test('renders custom search placeholder', () => {
     const customPlaceholder = 'Custom placeholder...';
-    render(<Header onMenuClick={onMenuClick} onNewTask={onNewTask} searchPlaceholder={customPlaceholder} />);
+    render(
+      <Header
+        onMenuClick={onMenuClick}
+        onNewTask={onNewTask}
+        searchPlaceholder={customPlaceholder}
+      />
+    );
     expect(screen.getByPlaceholderText(customPlaceholder)).toBeInTheDocument();
   });
 
@@ -81,23 +89,29 @@ describe('Header', () => {
   test('renders correct theme icon for dark mode', () => {
     mockedUseTheme.mockReturnValue({
       theme: 'dark',
-      toggleTheme,
+      toggleTheme
     } as any);
 
     render(<Header onMenuClick={onMenuClick} onNewTask={onNewTask} />);
     const themeToggleButton = screen.getByTestId('theme-toggle');
-    expect(themeToggleButton).toHaveAttribute('aria-label', 'Switch to light mode');
+    expect(themeToggleButton).toHaveAttribute(
+      'aria-label',
+      'Switch to light mode'
+    );
   });
 
   test('renders correct theme icon for light mode', () => {
     mockedUseTheme.mockReturnValue({
       theme: 'light',
-      toggleTheme,
+      toggleTheme
     } as any);
 
     render(<Header onMenuClick={onMenuClick} onNewTask={onNewTask} />);
     const themeToggleButton = screen.getByTestId('theme-toggle');
-    expect(themeToggleButton).toHaveAttribute('aria-label', 'Switch to dark mode');
+    expect(themeToggleButton).toHaveAttribute(
+      'aria-label',
+      'Switch to dark mode'
+    );
   });
 
   test('calls setFilters with search query after debounce', () => {
