@@ -44,6 +44,7 @@ export interface PagedResponse<T> {
 }
 
 export interface TodoFilters {
+  search?: string;
   isCompleted?: boolean;
   priority?: Priority;
   sortBy?: 'title' | 'dueDate' | 'priority' | 'createdAt';

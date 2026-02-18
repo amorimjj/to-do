@@ -48,9 +48,10 @@ public class TodosController : ControllerBase
         [FromQuery] bool? isCompleted = null,
         [FromQuery] Priority? priority = null,
         [FromQuery] string? sortBy = null,
-        [FromQuery] string sortOrder = "desc")
+        [FromQuery] string sortOrder = "desc",
+        [FromQuery] string? search = null)
     {
-        var query = new ListTodosQuery(page, pageSize, isCompleted, priority, sortBy, sortOrder);
+        var query = new ListTodosQuery(page, pageSize, isCompleted, priority, sortBy, sortOrder, search);
         var result = await _listTodosHandler.HandleAsync(query);
         return Ok(result);
     }

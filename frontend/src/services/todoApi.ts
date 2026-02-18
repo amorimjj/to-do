@@ -102,6 +102,7 @@ export const todoApi = {
     if (filters.isCompleted !== undefined)
       params.append('isCompleted', filters.isCompleted.toString());
     if (filters.priority) params.append('priority', filters.priority);
+    if (filters.search) params.append('search', filters.search);
     if (filters.sortBy) params.append('sortBy', filters.sortBy);
     if (filters.sortOrder) params.append('sortOrder', filters.sortOrder);
 

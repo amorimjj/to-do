@@ -229,6 +229,27 @@ public class TodosControllerTests
     }
 
     [Test]
+    public async Task List_WithSearch_CallsHandlerWithSearchParam()
+    {
+        // Arrange
+        var response = new PagedResponse<TodoResponse>(new List<TodoResponse>(), 1, 10, 0, 0);
+        string searchTerm = "test search";
+
+        _listTodosHandler
+            .Setup(h => h.HandleAsync(It.Is<ListTodosQuery>(q => q.Search == searchTerm), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(response);
+
+        // Act
+        var result = await _controller.List(search: searchTerm);
+
+        // Assert
+        Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
+        var okResult = (OkObjectResult)result.Result;
+        Assert.That(okResult.Value, Is.EqualTo(response));
+        _listTodosHandler.Verify(h => h.HandleAsync(It.Is<ListTodosQuery>(q => q.Search == searchTerm), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Test]
     public async Task Summary_ReturnsOkWithTodoSummaryResponse()
     {
         // Arrange

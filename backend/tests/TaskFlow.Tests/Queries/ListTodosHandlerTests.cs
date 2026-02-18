@@ -114,4 +114,46 @@ public class ListTodosHandlerTests
         Assert.That(resultList[1].Title, Is.EqualTo("B"));
         Assert.That(resultList[2].Title, Is.EqualTo("C"));
     }
+
+    [Test]
+    public async Task HandleAsync_WithSearch_ReturnsMatchingItems()
+    {
+        // Arrange
+        var todos = new List<TodoItem>
+        {
+            new TodoItem { Id = Guid.NewGuid(), Title = "Buy groceries", CreatedAt = DateTime.UtcNow },
+            new TodoItem { Id = Guid.NewGuid(), Title = "Clean the house", CreatedAt = DateTime.UtcNow },
+            new TodoItem { Id = Guid.NewGuid(), Title = "Buy milk", CreatedAt = DateTime.UtcNow }
+        };
+        _context.TodoItems.AddRange(todos);
+        await _context.SaveChangesAsync();
+
+        // 1. Exact match
+        var query1 = new ListTodosQuery(Search: "Buy groceries");
+        var result1 = await _handler.HandleAsync(query1);
+        Assert.That(result1.Items.Count(), Is.EqualTo(1));
+        Assert.That(result1.Items.First().Title, Is.EqualTo("Buy groceries"));
+
+        // 2. Case-insensitive match
+        var query2 = new ListTodosQuery(Search: "buy");
+        var result2 = await _handler.HandleAsync(query2);
+        Assert.That(result2.Items.Count(), Is.EqualTo(2));
+        Assert.That(result2.Items.All(t => t.Title.ToLower().Contains("buy")), Is.True);
+
+        // 3. Partial match
+        var query3 = new ListTodosQuery(Search: "gro");
+        var result3 = await _handler.HandleAsync(query3);
+        Assert.That(result3.Items.Count(), Is.EqualTo(1));
+        Assert.That(result3.Items.First().Title, Is.EqualTo("Buy groceries"));
+
+        // 4. No match
+        var query4 = new ListTodosQuery(Search: "xyz");
+        var result4 = await _handler.HandleAsync(query4);
+        Assert.That(result4.Items.Count(), Is.EqualTo(0));
+
+        // 5. Null/empty search
+        var query5 = new ListTodosQuery(Search: "");
+        var result5 = await _handler.HandleAsync(query5);
+        Assert.That(result5.Items.Count(), Is.EqualTo(3));
+    }
 }

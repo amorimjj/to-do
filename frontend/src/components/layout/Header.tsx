@@ -1,7 +1,8 @@
 'use client';
-
+import { useState, useEffect } from 'react';
 import { Search, User, Plus, Menu, Sun, Moon } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
+import { useTodos } from '@/hooks/useTodos';
 
 type HeaderProps = {
   onMenuClick?: () => void;
@@ -12,9 +13,20 @@ type HeaderProps = {
 export const Header = ({
   onMenuClick,
   onNewTask,
-  searchPlaceholder = 'Search tasks...'
+  searchPlaceholder = 'Search tasks by title...'
 }: HeaderProps) => {
+  const [searchQuery, setSearchQuery] = useState('');
   const { theme, toggleTheme } = useTheme();
+
+  const { setFilters } = useTodos();
+
+   useEffect(() => {
+    const timer = setTimeout(() => {
+      setFilters({ search: searchQuery || undefined });
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, setFilters]);
 
   return (
     <header className="sticky top-0 z-20 flex items-center gap-4 border-b border-gray-200 bg-white/80 px-4 py-3 backdrop-blur-sm dark:border-gray-700 dark:bg-gray-900/80 lg:px-6">
@@ -35,6 +47,8 @@ export const Header = ({
         />
         <input
           type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={searchPlaceholder}
           className="w-full max-w-md rounded-lg border border-gray-200 bg-gray-100 py-2 pl-9 pr-4 text-sm placeholder-gray-500 focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400"
           data-testid="header-search"

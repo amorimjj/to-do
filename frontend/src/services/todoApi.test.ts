@@ -60,6 +60,30 @@ describe('todoApi', () => {
     expect(result).toEqual(mockData);
   });
 
+  test('list calls get with search param when provided', async () => {
+    const filters = { search: 'test query' };
+    const mockData: PagedResponse<Todo> = {
+      items: [],
+      totalCount: 0,
+      totalPages: 0,
+      page: 1,
+      pageSize: 10
+    };
+    mockApiInstance.get.mockResolvedValueOnce({ data: mockData });
+
+    await todoApi.list(filters);
+
+    expect(mockApiInstance.get).toHaveBeenCalledWith(
+      '/todos',
+      expect.objectContaining({
+        params: expect.any(URLSearchParams)
+      })
+    );
+    
+    const params = mockApiInstance.get.mock.calls[0][1]?.params as URLSearchParams;
+    expect(params.get('search')).toBe('test query');
+  });
+
   test('create calls post with correct data', async () => {
     const request: CreateTodoRequest = {
       title: 'New Todo',

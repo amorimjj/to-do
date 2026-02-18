@@ -104,9 +104,6 @@ describe('MyTasksTab', () => {
 
     render(<MyTasksTab {...defaultProps} />);
 
-    const filterButton = screen.getByTestId('my-tasks-filter-advanced');
-    fireEvent.click(filterButton);
-
     const completedTab = screen.getByTestId('filter-completed');
     fireEvent.click(completedTab);
 

@@ -12,7 +12,8 @@ public record ListTodosQuery(
     bool? IsCompleted = null,
     Priority? Priority = null,
     string? SortBy = null,
-    string SortOrder = "desc"
+    string SortOrder = "desc",
+    string? Search = null
 ) : IQuery<PagedResponse<TodoResponse>>;
 
 public class ListTodosHandler : BaseQueryHandler<ListTodosQuery, PagedResponse<TodoResponse>>
@@ -34,6 +35,11 @@ public class ListTodosHandler : BaseQueryHandler<ListTodosQuery, PagedResponse<T
         if (query.Priority.HasValue)
         {
             dbQuery = dbQuery.Where(t => t.Priority == query.Priority.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.Search))
+        {
+            dbQuery = dbQuery.Where(t => t.Title.ToLower().Contains(query.Search.ToLower()));
         }
 
         // Sorting
