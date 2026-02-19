@@ -7,10 +7,10 @@
 
 - [TaskFlow live on Azure](https://orange-water-0c717341e.1.azurestaticapps.net)
 
-> A video walkthrough of the application is available [here](https://github.com/user-attachments/assets/7cbe1407-b941-49db-ae29-db9ffdf58076)
+> A video walkthrough of the application is available [here](assets/todo-demo.mp4)
 >
 > <p align="center">
->   <video src="https://github.com/user-attachments/assets/7cbe1407-b941-49db-ae29-db9ffdf58076" width="80%" controls></video>
+>   <video src="assets/todo-demo.mp4" width="80%" controls></video>
 
 </p>
 
@@ -75,10 +75,10 @@ docker compose up --build
 - Backend API: http://localhost:5005
 - Swagger UI: http://localhost:5005/swagger
 
-> A video walkthrough of application startup and seed [here](https://github.com/user-attachments/assets/692af025-2cd0-4653-88ca-cb85f8d44d6b)
+> A video walkthrough of application startup and seed [here](assets/todo-running-and-seed.mp4)
 >
 > <p align="center">
->   <video src="https://github.com/user-attachments/assets/692af025-2cd0-4653-88ca-cb85f8d44d6b" width="80%" controls></video>
+>   <video src="assets/todo-running-and-seed.mp4" width="80%" controls></video>
 
 </p>
 
@@ -96,10 +96,10 @@ docker run --rm -v "$(pwd):/app" -w /app mcr.microsoft.com/dotnet/sdk:9.0 bash -
 
 ## Running Tests
 
-> A video walkthrough of application tests [here](https://github.com/user-attachments/assets/2ac74157-55fd-485c-94c1-891c1a3899c1)
+> A video walkthrough of application tests [here](assets/todo-running-tests.mp4)
 >
 > <p align="center">
->   <video src="https://github.com/user-attachments/assets/2ac74157-55fd-485c-94c1-891c1a3899c1" width="80%" controls></video>
+>   <video src="assets/todo-running-tests.mp4" width="80%" controls></video>
 
 </p>
 
