@@ -57,6 +57,7 @@ export const Header = ({
               className="w-full max-w-md rounded-lg border border-gray-200 bg-gray-100 py-2 pl-9 pr-4 text-sm placeholder-gray-500 focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400"
               data-testid="header-search"
               aria-label="Search tasks"
+              maxLength={200}
             />
           </>
         )}
