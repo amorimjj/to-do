@@ -9,11 +9,19 @@ A production-ready MVP for task management, built with .NET 9 and React 19.
 - **Testing:** NUnit (Backend), Jest + React Testing Library (Frontend Unit), Playwright (E2E).
 - **DevOps:** Docker, GitHub Actions, Azure Static Web Apps + App Service.
 
+## Live code
+
+- [TaskFlow live on Azure](https://orange-water-0c717341e.1.azurestaticapps.net)
+
 ## Prerequisites
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) (for local development without Docker)
 - [Node.js 20+](https://nodejs.org/) (for local development without Docker)
+
+## Onboard
+
+Use commands `/onboard` and `/explain` to get familiarized with the application.
 
 ## Quick Start (Docker)
 
