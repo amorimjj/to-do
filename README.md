@@ -1,6 +1,13 @@
 # TaskFlow - Full Stack To-Do Application
 
-A production-ready MVP for task management, built with .NET 9 and React 19.
+> I truly appreciate the opportunity to participate in a selection process for such an important matter, one that gives us the chance to make a real difference in people's lives. Having lost beloved family members to this devastating disease, I deeply understand its profound impact and am personally committed to contributing meaningful solutions.
+> This project reflects my dedication to writing clean, well-tested, production-ready code that can serve as the foundation for truly impactful work in this vital field.
+
+## Live Demo
+
+- [TaskFlow live on Azure](https://orange-water-0c717341e.1.azurestaticapps.net)
+
+> A video walkthrough of the application is available [here](assets/todo-demo.mov)
 
 ## Tech Stack
 
