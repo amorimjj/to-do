@@ -1,6 +1,7 @@
 'use client';
 
 import { useReducer, useCallback, useEffect, ReactNode, useMemo } from 'react';
+import { toast } from 'sonner';
 import { todoApi } from '@/services/todoApi';
 import {
   Todo,
@@ -262,6 +263,7 @@ export const TodosProvider = ({ children }: TodosProviderProps) => {
       dispatch({ type: 'SET_SUMMARY', payload: summary });
     } catch (err) {
       logger.error('Failed to fetch summary', err);
+      toast.error('Failed to fetch summary');
       throw err;
     }
   }, []);
@@ -273,6 +275,7 @@ export const TodosProvider = ({ children }: TodosProviderProps) => {
       dispatch({ type: 'SET_WEEKLY_SUMMARY', payload: summary });
     } catch (err) {
       logger.error('Failed to fetch weekly summary', err);
+      toast.error('Failed to fetch weekly summary');
       throw err;
     }
   }, []);
@@ -285,6 +288,7 @@ export const TodosProvider = ({ children }: TodosProviderProps) => {
     } catch (err) {
       logger.error('Failed to fetch todos', err, { filters: state.filters });
       dispatch({ type: 'SET_ERROR', payload: 'Failed to fetch todos' });
+      toast.error('Failed to fetch todos');
     }
   }, [state.filters]);
 
@@ -310,6 +314,7 @@ export const TodosProvider = ({ children }: TodosProviderProps) => {
         page: state.currentPage + 1
       });
       dispatch({ type: 'SET_LOADING_MORE', payload: false });
+      toast.error('Failed to load more todos');
     }
   }, [state.loadingMore, state.hasMore, state.currentPage, state.filters]);
 
@@ -320,6 +325,7 @@ export const TodosProvider = ({ children }: TodosProviderProps) => {
     } catch (err) {
       logger.error('Failed to create todo', err, { request });
       dispatch({ type: 'SET_ERROR', payload: 'Failed to create todo' });
+      toast.error('Failed to create todo');
     }
   }, []);
 
@@ -331,6 +337,7 @@ export const TodosProvider = ({ children }: TodosProviderProps) => {
       } catch (err) {
         logger.error('Failed to update todo', err, { id, request });
         dispatch({ type: 'SET_ERROR', payload: 'Failed to update todo' });
+        toast.error('Failed to update todo');
       }
     },
     []
@@ -343,6 +350,7 @@ export const TodosProvider = ({ children }: TodosProviderProps) => {
       if (!todo) {
         logger.error('Failed to toggle todo: not found', { id });
         dispatch({ type: 'SET_ERROR', payload: 'Todo not found' });
+        toast.error('Todo not found');
         return;
       }
 
@@ -360,6 +368,7 @@ export const TodosProvider = ({ children }: TodosProviderProps) => {
         dispatch({ type: 'UPDATE_TODO', payload: todo });
         logger.error('Failed to toggle todo', err, { id });
         dispatch({ type: 'SET_ERROR', payload: 'Failed to toggle todo' });
+        toast.error('Failed to toggle todo');
       }
     },
     [state.todos]
@@ -372,6 +381,7 @@ export const TodosProvider = ({ children }: TodosProviderProps) => {
       if (!deleting) {
         logger.error('Failed to delete todo: not found', { id });
         dispatch({ type: 'SET_ERROR', payload: 'Todo not found' });
+        toast.error('Todo not found');
         return;
       }
 
@@ -391,6 +401,7 @@ export const TodosProvider = ({ children }: TodosProviderProps) => {
         logger.error('Failed to delete todo', err, { id });
         dispatch({ type: 'ADD_TODO', payload: deleting });
         dispatch({ type: 'SET_ERROR', payload: 'Failed to delete todo' });
+        toast.error('Failed to delete todo');
       }
     },
     [state.todos, state.filters.page, setFilters, fetchTodos]

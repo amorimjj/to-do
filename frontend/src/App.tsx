@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import { ThemeProvider } from '@/contexts/theme';
 import { TodosProvider } from '@/contexts/todos';
 import { Sidebar } from '@/components/layout/Sidebar';
@@ -126,6 +127,7 @@ export default function App() {
     <ThemeProvider>
       <TodosProvider>
         <AppContent />
+        <Toaster position="bottom-right" richColors />
       </TodosProvider>
     </ThemeProvider>
   );
