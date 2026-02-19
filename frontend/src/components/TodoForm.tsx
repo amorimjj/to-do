@@ -26,6 +26,7 @@ const PriorityButton = ({
 }: PriorityButtonProps) => (
   <button
     data-selected={selected}
+    data-testid={`todo-input-priority-${priority.toLowerCase()}`}
     type="button"
     className="cursor-pointer rounded-full data-[selected=true]:ring-2 data-[selected=true]:ring-blue-500 outline-none"
     onClick={onClick}
@@ -76,9 +77,8 @@ export const TodoForm: FC<TodoFormProps> = ({ initialData, onCancel }) => {
         setDescription('');
         setPriority('Medium');
         setDueDate('');
-      } else {
-        onCancel?.();
       }
+      onCancel?.();
     } finally {
       setIsLoading(false);
     }

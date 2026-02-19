@@ -168,7 +168,10 @@ export const OverviewTab = ({
             <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               Priority Tasks
               {priorityCount > 0 && (
-                <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-violet-100 px-1.5 text-xs font-medium text-violet-700 dark:bg-violet-900/50 dark:text-violet-300">
+                <span
+                  className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-violet-100 px-1.5 text-xs font-medium text-violet-700 dark:bg-violet-900/50 dark:text-violet-300"
+                  data-testid="priority-tasks-count"
+                >
                   {priorityCount}
                 </span>
               )}

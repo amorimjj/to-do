@@ -109,7 +109,7 @@ function AppContent() {
         <ModalBox onClose={closeForm}>
           <TodoForm
             initialData={editingTodo}
-            onCancel={editingTodo ? closeForm : undefined}
+            onCancel={closeForm}
           />
         </ModalBox>
       )}

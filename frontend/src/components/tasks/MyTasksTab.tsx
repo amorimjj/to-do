@@ -31,8 +31,11 @@ export const MyTasksTab = ({ onToggle, onDelete, onEdit }: MyTasksTabProps) => {
     hasMore,
     loadMore,
     setFilters,
-    createTodo
+    createTodo,
+    filters
   } = useTodos();
+
+  const isFiltering = filter !== 'all' || priorityFilter !== 'all' || !!filters.search;
 
   const { sentinelRef } = useInfiniteScroll({
     onLoadMore: () => loadMore(),
@@ -159,9 +162,9 @@ export const MyTasksTab = ({ onToggle, onDelete, onEdit }: MyTasksTabProps) => {
           data-testid="my-tasks-empty"
         >
           <p className="text-gray-500 dark:text-gray-400">
-            {filter === 'all' && priorityFilter === 'all'
-              ? 'No tasks yet. Add one above.'
-              : 'No tasks found matching your filters.'}
+            {isFiltering
+              ? 'No tasks found matching your filters.'
+              : 'No tasks yet. Add one above.'}
           </p>
         </div>
       ) : (
