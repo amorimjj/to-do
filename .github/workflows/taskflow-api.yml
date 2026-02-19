@@ -26,6 +26,9 @@ jobs:
         with:
           dotnet-version: "9.x"
 
+      - name: Run tests
+        run: dotnet test tests/TaskFlow.Tests/TaskFlow.Tests.csproj
+
       - name: Build with dotnet
         run: dotnet build src/TaskFlow.csproj --configuration Release
 
