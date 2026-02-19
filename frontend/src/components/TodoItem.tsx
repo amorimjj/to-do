@@ -61,20 +61,20 @@ export const TodoItem: FC<TodoItemProps> = ({
       </div>
     </div>
 
-    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+    <div className="flex items-center gap-4 md:gap-1 md:opacity-0 group-hover:opacity-100 transition-opacity">
       <button
         onClick={() => onEdit(todo)}
         className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full transition-colors"
         data-testid="todo-edit"
       >
-        <Edit2 className="w-4 h-4" />
+        <Edit2 className="w-6 h-6 md:w-4 md:h-4" />
       </button>
       <button
         onClick={() => onDelete(todo.id)}
         className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
         data-testid="todo-delete"
       >
-        <Trash2 className="w-4 h-4" />
+        <Trash2 className="w-6 h-6 md:w-4 md:h-4" />
       </button>
     </div>
   </div>

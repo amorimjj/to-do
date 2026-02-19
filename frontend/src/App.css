@@ -41,3 +41,11 @@
 .read-the-docs {
   color: #888;
 }
+
+input[type="date"] {
+  -webkit-min-logical-width: calc(100% - 16px);
+}
+
+input[type="date"] {
+  -webkit-appearance: none;
+}
