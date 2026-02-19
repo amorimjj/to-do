@@ -7,51 +7,103 @@
 
 - [TaskFlow live on Azure](https://orange-water-0c717341e.1.azurestaticapps.net)
 
-> A video walkthrough of the application is available [here](assets/todo-demo.mov)
+> A video walkthrough of the application is available [here](https://github.com/user-attachments/assets/7cbe1407-b941-49db-ae29-db9ffdf58076)
+>
+> <p align="center">
+>   <video src="https://github.com/user-attachments/assets/7cbe1407-b941-49db-ae29-db9ffdf58076" width="80%" controls></video>
+
+</p>
+
+## Screenshots
+
+| Overview Dashboard               | Task Management               |
+| -------------------------------- | ----------------------------- |
+| ![Overview](assets/overview.png) | ![Tasks](assets/my-tasks.png) |
+
+| Settins                          | Dark Mode                          |
+| -------------------------------- | ---------------------------------- |
+| ![Settings](assets/settings.png) | ![Dark Mode](assets/dark-mode.png) |
+
+| Mobile View                            |
+| -------------------------------------- |
+| ![Mobile View](assets/mobile-view.png) |
 
 ## Tech Stack
 
-- **Backend:** ASP.NET Core 9, EF Core, SQLite, FluentValidation, Swagger.
-- **Frontend:** React 19, Vite, Tailwind CSS 4, Lucide Icons.
-- **Testing:** NUnit (Backend), Jest + React Testing Library (Frontend Unit), Playwright (E2E).
-- **DevOps:** Docker, GitHub Actions, Azure Static Web Apps + App Service.
+- **Backend:** ASP.NET Core 9, EF Core, SQLite, FluentValidation, Swagger
+- **Frontend:** React 19, Vite, Tailwind CSS 4, Lucide Icons
+- **Testing:** NUnit (Backend), Jest + React Testing Library (Frontend), Playwright (E2E)
+- **DevOps:** Docker, GitHub Actions, Azure Static Web Apps + App Service
 
-## Live code
+## Key Highlights
 
-- [TaskFlow live on Azure](https://orange-water-0c717341e.1.azurestaticapps.net)
+- **Clean, readable code** — Focused on clarity and maintainability over
+  premature optimization. The architecture and separation of concerns keeps the codebase easy to navigate and extend.
 
-## Prerequisites
+- **Comprehensive test coverage** — Unit tests (NUnit + Jest), integration tests, and end-to-end tests (Playwright) with Page Object Model, state isolation, and CI integration.
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) (for local development without Docker)
-- [Node.js 20+](https://nodejs.org/) (for local development without Docker)
+- **Scalability-ready architecture** — While applying heavy scalability patterns at this stage would be overkill, the core of the application and Command/Query separation makes it straightforward to introduce a queue system or event-driven processing in the future.
 
-## Onboard
+- **Deliberate omission of authentication** — Authentication is a critical component that deserves a fully planned and secure implementation. Rather than shipping an incomplete or hastily designed version, I chose to leave it out entirely. The architecture is prepared for it — Commands and Queries are designed to easily incorporate `UserId` filtering once JWT auth is integrated.
 
-Use commands `/onboard` and `/explain` to get familiarized with the application.
+- **Responsive design** — Mobile-friendly layouts with Tailwind CSS 4.
+
+- **Optimistic updates & atomic operations** — The UI responds immediately to user actions while API calls happen in the background, with proper rollback on failure.
+
+- **API-first architecture** — Clean REST API with Swagger documentation, server-side pagination, filtering, and sorting.
+
+## Features
+
+- Full CRUD for tasks with priority levels (Low, Medium, High)
+- Due date management
+- Completion toggle with optimistic UI
+- Overview dashboard with weekly summary and statistics
+- Filtering by status and priority
+- Server-side pagination with infinite scroll
+- Search functionality
+- Dark/Light theme
+- Quick Add for fast task creation
+- Data Seed
 
 ## Quick Start (Docker)
-
-Run the entire stack using Docker Compose:
 
 ```bash
 docker compose up --build
 ```
 
-- Frontend: [http://localhost:3000](http://localhost:3000)
-- Backend API: [http://localhost:5005](http://localhost:5005)
-- Swagger UI: [http://localhost:5005/swagger](http://localhost:5005/swagger)
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:5005
+- Swagger UI: http://localhost:5005/swagger
+
+> A video walkthrough of application startup and seed [here](https://github.com/user-attachments/assets/692af025-2cd0-4653-88ca-cb85f8d44d6b)
+>
+> <p align="center">
+>   <video src="https://github.com/user-attachments/assets/692af025-2cd0-4653-88ca-cb85f8d44d6b" width="80%" controls></video>
+
+</p>
+
+> Running the seed command
+
+```bash
+docker run --rm -v "$(pwd):/app" -w /app mcr.microsoft.com/dotnet/sdk:9.0 bash -c "cd backend/src && dotnet run -- --seed"
+```
+
+### Prerequisites
+
+- Docker Desktop
+- .NET 9 SDK (local dev without Docker)
+- Node.js 20+ (local dev without Docker)
 
 ## Running Tests
 
-### Backend Tests (NUnit)
+> A video walkthrough of application tests [here](https://github.com/user-attachments/assets/2ac74157-55fd-485c-94c1-891c1a3899c1)
+>
+> <p align="center">
+>   <video src="https://github.com/user-attachments/assets/2ac74157-55fd-485c-94c1-891c1a3899c1" width="80%" controls></video>
 
-```bash
-cd backend/tests/TaskFlow.Tests
-dotnet test
-```
+</p>
 
-Or using docker
+### Backend (NUnit)
 
 ```bash
 docker run --rm -v "$(pwd):/app" -w /app mcr.microsoft.com/dotnet/sdk:9.0 bash -c "cd backend/tests/TaskFlow.Tests && dotnet test"
@@ -59,37 +111,33 @@ docker run --rm -v "$(pwd):/app" -w /app mcr.microsoft.com/dotnet/sdk:9.0 bash -
 
 ![Backend Results](assets/backend.png)
 
-### Frontend Unit Tests (Jest)
+### Frontend Unit (Jest)
 
 ```bash
-cd frontend
-npm test
+cd frontendnpm test
 ```
 
 ![Frontend Results](assets/frontend.png)
 
-### E2E Tests (Playwright)
+### E2E (Playwright)
 
 ```bash
-# Ensure services are running in E2E mode
-docker compose -f docker-compose.e2e.yml up -d
-cd frontend
-npm run e2e
+docker compose -f docker-compose.e2e.yml up -dcd frontendnpm run e2e
 ```
 
 ![E2E Results](assets/e2e.png)
 
-## Architecture Notes
+## Architecture
 
-- **Lightweight CQRS:** The backend uses a custom Command/Query pattern without external libraries like MediatR to keep dependencies minimal while ensuring clean separation of concerns.
-- **Single File Features:** Each command and query is colocated with its handler and validator in a single file for better discoverability.
-- **E2E State API:** A dedicated `/api/test/reset` endpoint (enabled only in `E2E` environment) allows Playwright to reset the database to a known state before each test.
-- **Tailwind 4:** Using the latest CSS-first configuration model.
+- **Lightweight CQRS** — Custom Command/Query pattern without external libraries like MediatR, keeping dependencies minimal while ensuring clean separation of concerns.
+- **Single-File Features** — Each command/query is colocated with its handler and validator for better discoverability.
+- **E2E State API** — A dedicated `/api/test/reset` endpoint (enabled only in E2E environment) allows Playwright to reset the database before each test.
 
-## Trade-offs & Assumptions
+## Trade-offs
 
-1. **SQLite for Persistence:** Chosen for portability and compatibility with Azure Free Tier. In a high-scale production environment, Azure SQL or PostgreSQL would be preferred.
-2. **No Authentication:** This MVP is single-user. However, the architecture (Commands/Queries) is designed to easily incorporate `UserId` filtering once JWT auth is added. **I want to share that I didn't implement authentication at all because it is a critical component of the application. Rather than adding a hastily designed or incomplete version, I chose to leave it out entirely until a fully planned and secure implementation can be integrated**.
-3. **In-Memory for Unit Tests:** Backend tests use EF Core In-Memory provider for speed and isolation.
-4. **Hard Delete:** Tasks are permanently removed. A future iteration could implement soft-deletes for auditability.
-5. **Mobile**: Not fully tested on small screen and there are a few small issues.
+| Decision                 | Rationale                                                                                 |
+| ------------------------ | ----------------------------------------------------------------------------------------- |
+| SQLite                   | Chosen matching the project specs.                                                        |
+| No Authentication        | Intentionally omitted — see Key Highlights.                                               |
+| In-Memory for Unit Tests | EF Core In-Memory provider for speed and isolation.                                       |
+| Hard Delete              | Tasks are permanently removed. Soft-deletes for auditability would be a future iteration. |
