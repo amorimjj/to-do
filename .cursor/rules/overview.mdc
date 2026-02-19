@@ -4,6 +4,7 @@ globs: **/*
 ---
 
 # Project Overview
+
 Next.js 16.1, React 19, TailwindCSS 3.4, AWS Amplify Gen2
 
 ## General Guidelines
@@ -15,10 +16,10 @@ Next.js 16.1, React 19, TailwindCSS 3.4, AWS Amplify Gen2
 
 ## Stack
 
-- **Framework:** 16.1 App Router, React 19
+- **Framework:** Vite/React 19
 - **API:** Rest API
-- **Database:** PostgreSQL (RDS), DynamoDB 
-- **UI:** RocketIcons, Tailwind CSS 3.4
+- **Database:** PostgreSQL (RDS), DynamoDB
+- **UI:** Lucide, Tailwind CSS 4
 - **Testing:** Jest, Playwright
 
 ## Code Style

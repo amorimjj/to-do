@@ -42,12 +42,16 @@ Or using docker
 docker run --rm -v "$(pwd):/app" -w /app mcr.microsoft.com/dotnet/sdk:9.0 bash -c "cd backend/tests/TaskFlow.Tests && dotnet test"
 ```
 
+![Backend Results](assets/backend.png)
+
 ### Frontend Unit Tests (Jest)
 
 ```bash
 cd frontend
 npm test
 ```
+
+![Frontend Results](assets/frontend.png)
 
 ### E2E Tests (Playwright)
 
@@ -57,6 +61,8 @@ docker compose -f docker-compose.e2e.yml up -d
 cd frontend
 npm run e2e
 ```
+
+![E2E Results](assets/e2e.png)
 
 ## Architecture Notes
 
@@ -68,6 +74,6 @@ npm run e2e
 ## Trade-offs & Assumptions
 
 1. **SQLite for Persistence:** Chosen for portability and compatibility with Azure Free Tier. In a high-scale production environment, Azure SQL or PostgreSQL would be preferred.
-2. **No Authentication:** This MVP is single-user. However, the architecture (Commands/Queries) is designed to easily incorporate `UserId` filtering once JWT auth is added.
+2. **No Authentication:** This MVP is single-user. However, the architecture (Commands/Queries) is designed to easily incorporate `UserId` filtering once JWT auth is added. **I want to share that I didn't implement authentication at all because it is a critical component of the application. Rather than adding a hastily designed or incomplete version, I chose to leave it out entirely until a fully planned and secure implementation can be integrated**.
 3. **In-Memory for Unit Tests:** Backend tests use EF Core In-Memory provider for speed and isolation.
 4. **Hard Delete:** Tasks are permanently removed. A future iteration could implement soft-deletes for auditability.
