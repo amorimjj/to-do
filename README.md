@@ -10,7 +10,7 @@
 > A video walkthrough of the application is available [here](assets/todo-demo.mp4)
 >
 > <p align="center">
->   <video src="https://github.com/amorimjj/to-do/raw/refs/heads/main/assets/todo-demo.mp4" width="80%" controls></video>
+>   <video src="https://raw.githubusercontent.com/amorimjj/to-do/main/assets/todo-demo.mp4" width="80%" controls></video>
 
 </p>
 
@@ -78,7 +78,7 @@ docker compose up --build
 > A video walkthrough of application startup and seed [here](assets/todo-running-and-seed.mp4)
 >
 > <p align="center">
->   <video src="https://github.com/amorimjj/to-do/raw/refs/heads/main/assets/todo-running-and-seed.mp4" width="80%" controls></video>
+>   <video src="https://raw.githubusercontent.com/amorimjj/to-do/main/assets/todo-running-and-seed.mp4" width="80%" controls></video>
 
 </p>
 
@@ -99,7 +99,7 @@ docker run --rm -v "$(pwd):/app" -w /app mcr.microsoft.com/dotnet/sdk:9.0 bash -
 > A video walkthrough of application tests [here](assets/todo-running-tests.mp4)
 >
 > <p align="center">
->   <video src="https://github.com/amorimjj/to-do/raw/refs/heads/main/assets/todo-running-tests.mp4" width="80%" controls></video>
+>   <video src="https://raw.githubusercontent.com/amorimjj/to-do/main/assets/todo-running-tests.mp4" width="80%" controls></video>
 
 </p>
 
