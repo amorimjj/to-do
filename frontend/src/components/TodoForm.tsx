@@ -43,7 +43,7 @@ export const TodoForm: FC<TodoFormProps> = ({ initialData, onCancel }) => {
   const [isSubmitting, setIsLoading] = useState(false);
 
   const { createTodo, updateTodo } = useTodos();
-console.log(initialData);
+
   useEffect(() => {
     if (initialData) {
       setTitle(initialData.title);
