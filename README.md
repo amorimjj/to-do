@@ -20,7 +20,7 @@
 | -------------------------------- | ----------------------------- |
 | ![Overview](assets/overview.png) | ![Tasks](assets/my-tasks.png) |
 
-| Settins                          | Dark Mode                          |
+| Settings                         | Dark Mode                          |
 | -------------------------------- | ---------------------------------- |
 | ![Settings](assets/settings.png) | ![Dark Mode](assets/dark-mode.png) |
 
@@ -114,7 +114,8 @@ docker run --rm -v "$(pwd):/app" -w /app mcr.microsoft.com/dotnet/sdk:9.0 bash -
 ### Frontend Unit (Jest)
 
 ```bash
-cd frontendnpm test
+cd frontend
+npm test
 ```
 
 ![Frontend Results](assets/frontend.png)
@@ -122,7 +123,8 @@ cd frontendnpm test
 ### E2E (Playwright)
 
 ```bash
-docker compose -f docker-compose.e2e.yml up -dcd frontendnpm run e2e
+docker compose -f docker-compose.e2e.yml up -d
+cd frontendnpm run e2e
 ```
 
 ![E2E Results](assets/e2e.png)
@@ -132,6 +134,42 @@ docker compose -f docker-compose.e2e.yml up -dcd frontendnpm run e2e
 - **Lightweight CQRS** — Custom Command/Query pattern without external libraries like MediatR, keeping dependencies minimal while ensuring clean separation of concerns.
 - **Single-File Features** — Each command/query is colocated with its handler and validator for better discoverability.
 - **E2E State API** — A dedicated `/api/test/reset` endpoint (enabled only in E2E environment) allows Playwright to reset the database before each test.
+
+## CI/CD Pipeline
+
+            ┌──────────────┐
+            │ Push / PR    │
+            │ to main      │
+            └──────┬───────┘
+                   │
+                   ▼
+    ┌───────────────────────────────┐
+    │          E2E Tests            |
+    | Docker Compose + Playwright   │
+    └──────────────┬────────────────┘
+                   │ ✅
+              ┌────┴────┐
+              ▼         ▼
+        ┌────────┐  ┌──────────────┐
+        │ Build  │  │ Build & Test │
+        │   API  │  │ Frontend     │
+        │ + Test │  │ (Jest)       │
+        └───┬────┘  └──────┬───────┘
+            │✅            |✅
+            ▼              ▼
+        ┌────────┐ ┌──────────────┐
+        │ Deploy │ │    Deploy    │
+        │  API   │ │   Frontend   │
+        │ Azure  │ │ Azure Static │
+        │App Svc │ │   Web Apps   │
+        └────────┘ └──────────────┘
+
+**Pipeline stages:**
+
+1. **E2E Tests** — Spins up the full stack via Docker Compose, waits for health check, then runs Playwright tests. Artifacts (report) are uploaded on every run.
+2. **Backend Build & Test** — Runs NUnit tests, builds the .NET 9 API, and publishes the artifact. Only runs after E2E passes.
+3. **Frontend Build & Test** — Runs Jest unit tests, then builds and deploys the React app. Only runs after E2E passes.
+4. **Deployment** — API deploys to **Azure App Service** Frontend deploys to **Azure Static Web Apps**. Both use secure OIDC / token-based authentication with Azure.
 
 ## Trade-offs
 
