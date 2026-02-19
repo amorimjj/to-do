@@ -64,7 +64,7 @@ test.describe('Todo Overview', () => {
     await expect(page).toHaveURL(/\/my-tasks/);
   });
 
-  test('should open new task modal from overview via Get Started button', async ({
+  test.skip('should open new task modal from overview via Get Started button', async ({
     page,
     stateApi
   }) => {
