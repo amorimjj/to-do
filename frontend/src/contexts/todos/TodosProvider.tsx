@@ -14,6 +14,7 @@ import {
 } from '@/types/todo';
 import { isThisWeek, getDayOfWeek } from '@/utils/date';
 import { logger } from '@/utils/logger';
+import { generateId } from '@/utils/generateId';
 import { TodoContext, TodosContextState } from './TodosContext';
 
 type Action =
@@ -33,7 +34,8 @@ type Action =
   | { type: 'SET_FILTERS'; payload: TodoFilters }
   | { type: 'ADD_TODO'; payload: Todo }
   | { type: 'UPDATE_TODO'; payload: Todo }
-  | { type: 'REMOVE_TODO'; payload: string };
+  | { type: 'REMOVE_TODO'; payload: string }
+  | { type: 'REPLACE_TODO'; payload: { tempId: string; newTodo: Todo } };
 
 const initialState: TodosContextState = {
   todos: [],
@@ -240,6 +242,12 @@ function reducer(state: TodosContextState, action: Action): TodosContextState {
         weeklySummary: newWeeklySummary
       };
     }
+    case 'REPLACE_TODO': {
+      return {
+        ...state,
+        todos: state.todos.map((t) => t.id === action.payload.tempId ? action.payload.newTodo : t)
+      };
+    }
     default:
       return state;
   }
@@ -319,11 +327,24 @@ export const TodosProvider = ({ children }: TodosProviderProps) => {
   }, [state.loadingMore, state.hasMore, state.currentPage, state.filters]);
 
   const createTodo = useCallback(async (request: CreateTodoRequest) => {
+    const id = generateId();
+
+    const optimisticTodo = {
+      ...request,
+      id,
+      isCompleted: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      dueDate: request.dueDate || null,
+      description: request.description || null,
+    };
+    dispatch({ type: 'ADD_TODO', payload: optimisticTodo });
     try {
       const newTodo = await todoApi.create(request);
-      dispatch({ type: 'ADD_TODO', payload: newTodo });
+      dispatch({ type: 'REPLACE_TODO', payload: { tempId: id, newTodo } });
     } catch (err) {
       logger.error('Failed to create todo', err, { request });
+      dispatch({ type: 'REMOVE_TODO', payload: id });
       dispatch({ type: 'SET_ERROR', payload: 'Failed to create todo' });
       toast.error('Failed to create todo');
     }
