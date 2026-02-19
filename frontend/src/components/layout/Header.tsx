@@ -8,11 +8,13 @@ type HeaderProps = {
   onMenuClick?: () => void;
   onNewTask?: () => void;
   searchPlaceholder?: string;
+  showSearch?: boolean;
 };
 
 export const Header = ({
   onMenuClick,
   onNewTask,
+  showSearch = true,
   searchPlaceholder = 'Search tasks by title...'
 }: HeaderProps) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -41,19 +43,23 @@ export const Header = ({
       </button>
 
       <div className="relative flex-1">
-        <Search
-          className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-          aria-hidden
-        />
-        <input
-          type="search"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder={searchPlaceholder}
-          className="w-full max-w-md rounded-lg border border-gray-200 bg-gray-100 py-2 pl-9 pr-4 text-sm placeholder-gray-500 focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400"
-          data-testid="header-search"
-          aria-label="Search tasks"
-        />
+        {showSearch && (
+          <>
+            <Search
+              className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+              aria-hidden
+            />
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={searchPlaceholder}
+              className="w-full max-w-md rounded-lg border border-gray-200 bg-gray-100 py-2 pl-9 pr-4 text-sm placeholder-gray-500 focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400"
+              data-testid="header-search"
+              aria-label="Search tasks"
+            />
+          </>
+        )}
       </div>
 
       <div className="flex items-center gap-1">

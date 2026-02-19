@@ -15,7 +15,7 @@ const SettingsSection = ({
   title,
   description,
   icon,
-  children,
+  children
 }: SettingsSectionProps) => (
   <div className="mb-8 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
     <div className="flex items-start gap-4 border-b border-gray-100 bg-gray-50/50 p-4 dark:border-gray-800 dark:bg-gray-800/50">
@@ -26,7 +26,9 @@ const SettingsSection = ({
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           {title}
         </h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400">{description}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          {description}
+        </p>
       </div>
     </div>
     <div className="p-4">{children}</div>
@@ -44,7 +46,9 @@ const SettingItem = ({ label, description, children }: SettingItemProps) => (
     <div>
       <p className="font-medium text-gray-900 dark:text-gray-100">{label}</p>
       {description && (
-        <p className="text-sm text-gray-500 dark:text-gray-400">{description}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          {description}
+        </p>
       )}
     </div>
     <div className="w-full sm:w-auto">{children}</div>

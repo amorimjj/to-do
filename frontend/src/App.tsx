@@ -82,9 +82,7 @@ function AppContent() {
           </div>
         );
       case 'settings':
-        return (
-          <Settings />
-        );
+        return <Settings />;
       default:
         return null;
     }
@@ -101,16 +99,14 @@ function AppContent() {
         <Header
           onMenuClick={() => setSidebarOpen(true)}
           onNewTask={openNewTask}
+          showSearch={activeTab !== 'settings'}
         />
         <main className="px-4 py-6 lg:px-8">{renderContent()}</main>
       </div>
 
       {showForm && (
         <ModalBox onClose={closeForm}>
-          <TodoForm
-            initialData={editingTodo}
-            onCancel={closeForm}
-          />
+          <TodoForm initialData={editingTodo} onCancel={closeForm} />
         </ModalBox>
       )}
 

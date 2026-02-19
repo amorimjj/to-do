@@ -4,7 +4,7 @@ import { useTheme } from '@/hooks/useTheme';
 
 // Mock useTheme hook
 jest.mock('@/hooks/useTheme', () => ({
-  useTheme: jest.fn(),
+  useTheme: jest.fn()
 }));
 
 describe('Settings', () => {
@@ -16,16 +16,20 @@ describe('Settings', () => {
     (useTheme as jest.Mock).mockReturnValue({
       theme: 'light',
       setTheme: mockSetTheme,
-      toggleTheme: mockToggleTheme,
+      toggleTheme: mockToggleTheme
     });
   });
 
   test('renders settings header and appearance section', () => {
     render(<Settings />);
 
-    expect(screen.getByRole('heading', { name: /Settings/i, level: 1 })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /Appearance/i, level: 3 })).toBeInTheDocument();
-    
+    expect(
+      screen.getByRole('heading', { name: /Settings/i, level: 1 })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /Appearance/i, level: 3 })
+    ).toBeInTheDocument();
+
     // Check that other sections are NOT present
     expect(screen.queryByText(/Account/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Notifications/i)).not.toBeInTheDocument();
@@ -49,7 +53,7 @@ describe('Settings', () => {
     (useTheme as jest.Mock).mockReturnValue({
       theme: 'dark',
       setTheme: mockSetTheme,
-      toggleTheme: mockToggleTheme,
+      toggleTheme: mockToggleTheme
     });
 
     render(<Settings />);
@@ -57,7 +61,11 @@ describe('Settings', () => {
     const darkBtn = screen.getByTestId('theme-dark-btn');
     const lightBtn = screen.getByTestId('theme-light-btn');
 
-    expect(darkBtn).toHaveClass('bg-white text-violet-600 shadow-sm dark:bg-gray-700 dark:text-violet-400');
-    expect(lightBtn).toHaveClass('text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200');
+    expect(darkBtn).toHaveClass(
+      'bg-white text-violet-600 shadow-sm dark:bg-gray-700 dark:text-violet-400'
+    );
+    expect(lightBtn).toHaveClass(
+      'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+    );
   });
 });
