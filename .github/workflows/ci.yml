@@ -97,7 +97,7 @@ jobs:
           package: .
 
   build_and_deploy_web:
-    needs: deploy_api
+    needs: e2e
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
