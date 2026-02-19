@@ -103,7 +103,10 @@ public static class TodoDataGenerator
 
             // CreatedAt spread over last 10 days
             var createdDaysAgo = random.Next(11);
-            var createdAt = now.AddDays(-createdDaysAgo).AddMinutes(random.Next(1440));
+            // Ensure createdAt is never in the future (at or before 'now')
+            var candidateCreatedAt = now.AddDays(-createdDaysAgo).AddMinutes(random.Next(1440));
+            var createdAt = candidateCreatedAt > DateTime.UtcNow ? DateTime.UtcNow : candidateCreatedAt;
+            createdAt = createdAt.AddDays(-2);
 
             // DueDate spread over past 3 days to future 14 days
             var hasDueDate = random.NextDouble() < 0.7;
@@ -122,7 +125,7 @@ public static class TodoDataGenerator
                 Priority = priority,
                 IsCompleted = isCompleted,
                 CreatedAt = createdAt,
-                UpdatedAt = createdAt.AddMinutes(random.Next(60)),
+                UpdatedAt = createdAt,
                 DueDate = dueDate
             };
 

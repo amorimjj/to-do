@@ -81,7 +81,23 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.EnsureCreated();
+
+    if (args.Contains("--reset-db"))
+    {
+        Console.WriteLine("🧹 Resetting database...");
+        await context.Database.EnsureDeletedAsync();
+        await context.Database.EnsureCreatedAsync();
+        Console.WriteLine("✅ Database reset successfully.");
+        
+        if (!args.Contains("--seed"))
+        {
+            return;
+        }
+    }
+    else
+    {
+        context.Database.EnsureCreated();
+    }
 
     if (args.Contains("--seed"))
     {
