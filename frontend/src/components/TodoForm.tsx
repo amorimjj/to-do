@@ -43,7 +43,7 @@ export const TodoForm: FC<TodoFormProps> = ({ initialData, onCancel }) => {
   const [isSubmitting, setIsLoading] = useState(false);
 
   const { createTodo, updateTodo } = useTodos();
-
+console.log(initialData);
   useEffect(() => {
     if (initialData) {
       setTitle(initialData.title);
@@ -72,13 +72,14 @@ export const TodoForm: FC<TodoFormProps> = ({ initialData, onCancel }) => {
 
     try {
       await onSubmit();
-      if (!initialData) {
-        setTitle('');
-        setDescription('');
-        setPriority('Medium');
-        setDueDate('');
+      setTitle('');
+      setDescription('');
+      setPriority('Medium');
+      setDueDate('');
+
+      if (initialData) {
+        onCancel?.();
       }
-      onCancel?.();
     } finally {
       setIsLoading(false);
     }
