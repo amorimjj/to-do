@@ -20,7 +20,7 @@ jobs:
           submodules: true
           lfs: false
       - name: Run tests
-        run: cd frontend && npm run install && npm run test
+        run: cd frontend && npm install && npm run test
 
       - name: Build And Deploy
         id: builddeploy
