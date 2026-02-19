@@ -42,7 +42,7 @@ export class TodoPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    
+
     // Navigation
     this.navOverview = page.getByRole('button', { name: 'Overview' });
     this.navTasks = page.getByRole('button', { name: 'My Tasks' });
@@ -85,13 +85,17 @@ export class TodoPage extends BasePage {
   async goto() {
     await this.page.goto('/my-tasks');
     await expect(this.myTasksTab).toBeVisible({ timeout: 10000 });
-    await expect(this.page.getByTestId('my-tasks-skeleton')).not.toBeVisible({ timeout: 10000 });
+    await expect(this.page.getByTestId('my-tasks-skeleton')).not.toBeVisible({
+      timeout: 10000
+    });
   }
 
   async gotoOverview() {
     await this.page.goto('/overview');
     await expect(this.overviewTab).toBeVisible({ timeout: 10000 });
-    await expect(this.page.getByTestId('overview-skeleton')).not.toBeVisible({ timeout: 10000 });
+    await expect(this.page.getByTestId('overview-skeleton')).not.toBeVisible({
+      timeout: 10000
+    });
   }
 
   async gotoSettings() {
@@ -106,16 +110,18 @@ export class TodoPage extends BasePage {
   ) {
     await this.headerNewTask.click();
     await expect(this.todoForm).toBeVisible();
-    
+
     await this.titleInput.fill(title);
     if (desc) await this.descInput.fill(desc);
-    
-    const priorityBtn = this.page.getByTestId(`todo-input-priority-${priority.toLowerCase()}`);
+
+    const priorityBtn = this.page.getByTestId(
+      `todo-input-priority-${priority.toLowerCase()}`
+    );
     await priorityBtn.click();
-    
+
     if (date) await this.dateInput.fill(date);
     await this.submitButton.click();
-    
+
     await expect(this.todoForm).toBeVisible();
     await this.expectTodoVisible(title);
   }
@@ -127,13 +133,19 @@ export class TodoPage extends BasePage {
   }
 
   async toggleTodo(title: string) {
-    const item = this.page.locator('[data-testid^="todo-item-"]').filter({ hasText: title }).first();
+    const item = this.page
+      .locator('[data-testid^="todo-item-"]')
+      .filter({ hasText: title })
+      .first();
     const checkbox = item.getByTestId('todo-toggle');
     await checkbox.click();
   }
 
   async deleteTodo(title: string) {
-    const item = this.page.locator('[data-testid^="todo-item-"]').filter({ hasText: title }).first();
+    const item = this.page
+      .locator('[data-testid^="todo-item-"]')
+      .filter({ hasText: title })
+      .first();
     await item.hover();
     await item.getByTestId('todo-delete').click();
     await this.confirmProceed.click();
@@ -141,26 +153,41 @@ export class TodoPage extends BasePage {
   }
 
   async openEditModal(title: string) {
-    const item = this.page.locator('[data-testid^="todo-item-"]').filter({ hasText: title }).first();
+    const item = this.page
+      .locator('[data-testid^="todo-item-"]')
+      .filter({ hasText: title })
+      .first();
     await item.hover();
     await item.getByTestId('todo-edit').click();
     await expect(this.todoForm).toBeVisible();
   }
 
   async expectTodoVisible(title: string) {
-    const item = this.page.locator('[data-testid^="todo-item-"]').filter({ hasText: title }).first();
+    const item = this.page
+      .locator('[data-testid^="todo-item-"]')
+      .filter({ hasText: title })
+      .first();
     await expect(item).toBeVisible({ timeout: 10000 });
   }
 
   async expectTodoNotVisible(title: string) {
-    const item = this.page.locator('[data-testid^="todo-item-"]').filter({ hasText: title }).first();
+    const item = this.page
+      .locator('[data-testid^="todo-item-"]')
+      .filter({ hasText: title })
+      .first();
     await expect(item).not.toBeVisible({ timeout: 10000 });
   }
 
   async expectTodoCompleted(title: string, completed: boolean = true) {
-    const item = this.page.locator('[data-testid^="todo-item-"]').filter({ hasText: title }).first();
+    const item = this.page
+      .locator('[data-testid^="todo-item-"]')
+      .filter({ hasText: title })
+      .first();
     const titleLocator = item.locator('h3');
-    await expect(titleLocator).toHaveAttribute('data-completed', completed.toString());
+    await expect(titleLocator).toHaveAttribute(
+      'data-completed',
+      completed.toString()
+    );
   }
 
   async filterByStatus(status: 'all' | 'pending' | 'completed') {
@@ -169,11 +196,14 @@ export class TodoPage extends BasePage {
   }
 
   async filterByPriority(priority: 'all' | 'low' | 'medium' | 'high') {
-    const isExpanded = await this.advancedFilterBtn.getAttribute('aria-expanded');
+    const isExpanded =
+      await this.advancedFilterBtn.getAttribute('aria-expanded');
     if (isExpanded !== 'true') {
       await this.advancedFilterBtn.click();
     }
-    await this.page.getByTestId(`filter-priority-${priority.toLowerCase()}`).click();
+    await this.page
+      .getByTestId(`filter-priority-${priority.toLowerCase()}`)
+      .click();
     await expect(this.page.getByTestId('my-tasks-skeleton')).not.toBeVisible();
   }
 
@@ -185,13 +215,25 @@ export class TodoPage extends BasePage {
 
   async expectStats(total: string, completed: string, pending: string) {
     // Target the first span which holds the value
-    await expect(this.statsTotal.locator('span').first()).toHaveText(total, { timeout: 10000 });
-    await expect(this.statsCompleted.locator('span').first()).toHaveText(completed, { timeout: 10000 });
-    await expect(this.statsPending.locator('span').first()).toHaveText(pending, { timeout: 10000 });
+    await expect(this.statsTotal.locator('span').first()).toHaveText(total, {
+      timeout: 10000
+    });
+    await expect(this.statsCompleted.locator('span').first()).toHaveText(
+      completed,
+      { timeout: 10000 }
+    );
+    await expect(this.statsPending.locator('span').first()).toHaveText(
+      pending,
+      { timeout: 10000 }
+    );
   }
 
   async expectEmptyState() {
-    await expect(this.page.getByTestId('my-tasks-skeleton')).not.toBeVisible({ timeout: 10000 });
-    await expect(this.page.getByTestId('my-tasks-empty')).toBeVisible({ timeout: 10000 });
+    await expect(this.page.getByTestId('my-tasks-skeleton')).not.toBeVisible({
+      timeout: 10000
+    });
+    await expect(this.page.getByTestId('my-tasks-empty')).toBeVisible({
+      timeout: 10000
+    });
   }
 }

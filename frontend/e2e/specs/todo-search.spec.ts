@@ -30,10 +30,11 @@ test.describe('Todo Search', () => {
     await todoPage.expectTodoVisible('Cherry Task');
   });
 
-  test('should show empty state when no results match search', async ({ page, stateApi }) => {
-    const todos = [
-      buildTodo({ title: 'Apple Task' })
-    ];
+  test('should show empty state when no results match search', async ({
+    page,
+    stateApi
+  }) => {
+    const todos = [buildTodo({ title: 'Apple Task' })];
     await stateApi.resetDatabase(todos);
 
     const todoPage = new TodoPage(page);
@@ -41,6 +42,8 @@ test.describe('Todo Search', () => {
 
     await todoPage.searchTodos('NoSuchTask');
     await todoPage.expectEmptyState();
-    await expect(page.getByText('No tasks found matching your filters.')).toBeVisible();
+    await expect(
+      page.getByText('No tasks found matching your filters.')
+    ).toBeVisible();
   });
 });

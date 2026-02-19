@@ -17,7 +17,7 @@ test.describe('Todo CRUD', () => {
 
     await todoPage.toggleTodo('Toggle Me');
     await todoPage.expectTodoCompleted('Toggle Me', true);
-    
+
     await todoPage.toggleTodo('Toggle Me');
     await todoPage.expectTodoCompleted('Toggle Me', false);
   });

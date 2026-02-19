@@ -6,7 +6,10 @@ export interface StateApiFixture {
   resetDatabase(data?: TodoSeed[]): Promise<void>;
 }
 
-export const test = base.extend<{ stateApi: StateApiFixture; todoPage: TodoPage }>({
+export const test = base.extend<{
+  stateApi: StateApiFixture;
+  todoPage: TodoPage;
+}>({
   stateApi: async ({}, use) => {
     const apiBase = process.env.BACKEND_URL || 'http://localhost:5001/api';
 

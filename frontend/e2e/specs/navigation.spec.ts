@@ -2,7 +2,10 @@ import { test, expect } from '../fixtures/state-api';
 import { TodoPage } from '../page-objects/TodoPage';
 
 test.describe('Sidebar Navigation', () => {
-  test('should navigate between tabs using sidebar', async ({ page, stateApi }) => {
+  test('should navigate between tabs using sidebar', async ({
+    page,
+    stateApi
+  }) => {
     await stateApi.resetDatabase();
     const todoPage = new TodoPage(page);
     await todoPage.gotoOverview();
@@ -23,14 +26,17 @@ test.describe('Sidebar Navigation', () => {
     await expect(page).toHaveURL(/\/overview/);
   });
 
-  test('should redirect invalid route to overview', async ({ page, stateApi }) => {
+  test('should redirect invalid route to overview', async ({
+    page,
+    stateApi
+  }) => {
     await stateApi.resetDatabase();
     const todoPage = new TodoPage(page);
     await page.goto('/no-such-route');
     await expect(todoPage.overviewTab).toBeVisible();
     await expect(page).toHaveURL(/\/overview/);
   });
-  
+
   test('should redirect root / to overview', async ({ page, stateApi }) => {
     await stateApi.resetDatabase();
     const todoPage = new TodoPage(page);

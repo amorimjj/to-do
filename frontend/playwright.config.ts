@@ -17,7 +17,7 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] }
     }
-  ],
+  ]
   /* webServer: [
     {
       command: 'VITE_API_URL=http://localhost:5001/api npm run dev -- --port 3001',
