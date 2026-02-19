@@ -35,7 +35,8 @@ export const MyTasksTab = ({ onToggle, onDelete, onEdit }: MyTasksTabProps) => {
     filters
   } = useTodos();
 
-  const isFiltering = filter !== 'all' || priorityFilter !== 'all' || !!filters.search;
+  const isFiltering =
+    filter !== 'all' || priorityFilter !== 'all' || !!filters.search;
 
   const { sentinelRef } = useInfiniteScroll({
     onLoadMore: () => loadMore(),
