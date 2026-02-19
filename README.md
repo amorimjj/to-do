@@ -85,3 +85,4 @@ npm run e2e
 2. **No Authentication:** This MVP is single-user. However, the architecture (Commands/Queries) is designed to easily incorporate `UserId` filtering once JWT auth is added. **I want to share that I didn't implement authentication at all because it is a critical component of the application. Rather than adding a hastily designed or incomplete version, I chose to leave it out entirely until a fully planned and secure implementation can be integrated**.
 3. **In-Memory for Unit Tests:** Backend tests use EF Core In-Memory provider for speed and isolation.
 4. **Hard Delete:** Tasks are permanently removed. A future iteration could implement soft-deletes for auditability.
+5. **Mobile**: Not fully tested on small screen and there are a few small issues.
